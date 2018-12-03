@@ -3,7 +3,9 @@ package org.terifan.spreadsheet;
 
 public class Sum implements Formula
 {
-	private final Range mRange;
+	private Range mRange;
+	private Number mValue;
+	private long mTimeCode;
 
 
 	public Sum(Range aRange)
@@ -12,8 +14,28 @@ public class Sum implements Formula
 	}
 
 
-	Object get()
+	@Override
+	public CellValue compute(SpreadSheet aSpreadSheet, long aTimeCode)
 	{
-		return 0;
+		if (mTimeCode != aTimeCode)
+		{
+			Number value = new Number();
+
+			mRange.forEach(t->{
+				value.add((Number)aSpreadSheet.getComputed(t, aTimeCode));
+			});
+			
+			mValue = value;
+			mTimeCode = aTimeCode;
+		}
+		
+		return mValue;
+	}
+
+
+	@Override
+	public CellValue get()
+	{
+		return mValue;
 	}
 }

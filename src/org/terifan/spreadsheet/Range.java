@@ -1,5 +1,6 @@
 package org.terifan.spreadsheet;
 
+import java.util.function.Consumer;
 
 public class Range
 {
@@ -23,5 +24,17 @@ public class Range
 	public Tuple getEnd()
 	{
 		return mEnd;
+	}
+	
+	
+	public void forEach(Consumer<Tuple> aConsumer)
+	{
+		for (int row = Math.min(mStart.mRow,mEnd.mRow); row <= Math.max(mStart.mRow,mEnd.mRow); row++)
+		{
+			for (int col = Math.min(mStart.mCol,mEnd.mCol); col <= Math.max(mStart.mCol,mEnd.mCol); col++)
+			{
+				aConsumer.accept(new Tuple(col, row));
+			}
+		}
 	}
 }
