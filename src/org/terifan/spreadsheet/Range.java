@@ -8,6 +8,13 @@ public class Range
 	private Tuple mEnd;
 
 
+	public Range(Tuple aStartEnd)
+	{
+		mStart = aStartEnd;
+		mEnd = aStartEnd;
+	}
+
+
 	public Range(Tuple aStart, Tuple aEnd)
 	{
 		mStart = aStart;

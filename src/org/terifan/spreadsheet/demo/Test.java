@@ -18,7 +18,8 @@ public class Test
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			
 			SpreadSheet ss = new SpreadSheet();
-			
+
+//			ss.set(1, 0, "sum(a0:a3");
 			ss.set(1, 0, new Sum(new Range(new Tuple(0, 0), new Tuple(0, 3))));
 			ss.set(0, 0, 4);
 			ss.set(0, 1, 7);
