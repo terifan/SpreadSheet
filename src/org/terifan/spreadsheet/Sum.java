@@ -22,13 +22,18 @@ public class Sum implements Formula
 			Number value = new Number();
 
 			mRange.forEach(t->{
-				value.add((Number)aSpreadSheet.getComputed(t, aTimeCode));
+				CellValue v = aSpreadSheet.getComputed(t, aTimeCode);
+
+				if (v instanceof Number)
+				{
+					value.add((Number)v);
+				}
 			});
 			
 			mValue = value;
 			mTimeCode = aTimeCode;
 		}
-		
+
 		return mValue;
 	}
 
