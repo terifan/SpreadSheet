@@ -1,5 +1,6 @@
 package org.terifan.spreadsheet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.JComponent;
@@ -8,18 +9,18 @@ import org.terifan.spreadsheet.ui.TableFactory;
 
 public class SpreadSheet
 {
-	private HashMap<Tuple, CellValue> mMap;
+	private Map mMap;
 
 
 	public SpreadSheet()
 	{
-		mMap = new HashMap<>();
+		mMap = new Map();
 	}
 
 
 	public CellValue get(int aCol, int aRow)
 	{
-		return mMap.get(new Tuple(aCol, aRow));
+		return mMap.get(aCol, aRow);
 	}
 
 
@@ -33,19 +34,19 @@ public class SpreadSheet
 	{
 		if (aValue instanceof Double || aValue instanceof Float)
 		{
-			mMap.put(new Tuple(aCol, aRow), new Number(((java.lang.Number)aValue).doubleValue()));
+			mMap.put(aCol, aRow, new Number(((java.lang.Number)aValue).doubleValue()));
 		}
 		else if (aValue instanceof Integer || aValue instanceof Long || aValue instanceof Short || aValue instanceof Byte)
 		{
-			mMap.put(new Tuple(aCol, aRow), new Number(((java.lang.Number)aValue).longValue()));
+			mMap.put(aCol, aRow, new Number(((java.lang.Number)aValue).longValue()));
 		}
 		else if (aValue instanceof Formula)
 		{
-			mMap.put(new Tuple(aCol, aRow), (Formula)aValue);
+			mMap.put(aCol, aRow, (Formula)aValue);
 		}
 		else if (aValue instanceof Number)
 		{
-			mMap.put(new Tuple(aCol, aRow), (Number)aValue);
+			mMap.put(aCol, aRow, (Number)aValue);
 		}
 		else
 		{
@@ -56,55 +57,53 @@ public class SpreadSheet
 
 	public void removeEmptyRows()
 	{
+		int maxCol = getMaxColumn();
 		int maxRow = getMaxRow();
-		for (int i = 0; i < maxRow; i++)
+		for (int y = 0; y < maxRow; y++)
 		{
+			boolean empty = true;
+			for (int x = 0; x < maxCol; x++)
+			{
+				if (get(x, y) != null)
+				{
+					empty = false;
+					break;
+				}
+			}
+			if (empty)
+			{
+				for (int yi = y + 1; yi < maxRow; yi++)
+				{
 
+				}
+				y--;
+				maxRow--;
+			}
 		}
 	}
 
 
 	public int getRowCount()
 	{
-		HashSet<Integer> rows = new HashSet<>();
-		for (Tuple tuple : mMap.keySet())
-		{
-			rows.add(tuple.getRow());
-		}
-		return rows.size();
+		return mMap.getRowCount();
 	}
 
 
 	public int getMaxRow()
 	{
-		int rows = 0;
-		for (Tuple tuple : mMap.keySet())
-		{
-			rows = Math.max(tuple.getRow(), rows);
-		}
-		return rows;
+		return mMap.getMaxRow();
 	}
 
 
 	public int getColumnCount()
 	{
-		HashSet<Integer> cols = new HashSet<>();
-		for (Tuple tuple : mMap.keySet())
-		{
-			cols.add(tuple.getCol());
-		}
-		return cols.size();
+		return mMap.getColumnCount();
 	}
 
 
 	public int getMaxColumn()
 	{
-		int cols = 0;
-		for (Tuple tuple : mMap.keySet())
-		{
-			cols = Math.max(tuple.getCol(), cols);
-		}
-		return cols;
+		return mMap.getMaxColumn();
 	}
 
 
@@ -151,7 +150,7 @@ public class SpreadSheet
 		long timeCode = System.nanoTime();
 		int maxRow = 1 + getMaxRow();
 		int maxColumn = 1 + getMaxColumn();
-		
+
 		CellValue[][] data = new CellValue[maxRow][maxColumn];
 		for (int row = 0; row < maxRow; row++)
 		{
@@ -166,18 +165,18 @@ public class SpreadSheet
 		{
 			columns[col] = getColumnLabel(col);
 		}
-		
+
 		return new TableFactory().createTable(data, columns);
 	}
 
 
 	public String getColumnLabel(int aColumn)
 	{
-		return Character.toString('A' + aColumn);
+		return Character.toString((char)(65 + aColumn));
 	}
 
 
-	CellValue getComputed(int aCol, int aRow, long aTimeCode)
+	public CellValue getComputed(int aCol, int aRow, long aTimeCode)
 	{
 		CellValue v = get(aCol, aRow);
 
@@ -185,18 +184,32 @@ public class SpreadSheet
 		{
 			v = ((Formula)v).compute(this, aTimeCode);
 		}
+		else if (v != null)
+		{
+			v = v.clone();
+		}
 
 		return v;
 	}
 
 
-	CellValue getComputed(Tuple aTuple, long aTimeCode)
+	public Number getComputedNumber(Tuple aTuple, long aTimeCode)
+	{
+		return (Number)getComputed(aTuple, aTimeCode);
+	}
+
+
+	public CellValue getComputed(Tuple aTuple, long aTimeCode)
 	{
 		CellValue v = get(aTuple);
 
 		if (v instanceof Formula)
 		{
 			v = ((Formula)v).compute(this, aTimeCode);
+		}
+		else if (v != null)
+		{
+			v = v.clone();
 		}
 
 		return v;

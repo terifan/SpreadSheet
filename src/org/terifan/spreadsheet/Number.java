@@ -4,94 +4,75 @@ package org.terifan.spreadsheet;
 public class Number implements CellValue
 {
 	private boolean mFloatingPoint;
-	private double mDouble;
-	private long mLong;
-	private int mCount;
+	private double mValue;
+	private boolean mUndefined;
 
 
 	public Number()
 	{
+		mUndefined = true;
 	}
 
 
-	public Number(double aDouble)
+	public Number(double aValue)
 	{
-		add(aDouble);
+		mValue = aValue;
+		mFloatingPoint = true;
 	}
 
 
-	public Number(long aLong)
+	public Number(long aValue)
 	{
-		add(aLong);
+		mValue = aValue;
 	}
 
 
-	public void add(Number aNumber)
+	public Number(Double aValue, boolean aFloatingPoint)
 	{
-		if (mFloatingPoint)
-		{
-			if (aNumber.mFloatingPoint)
-			{
-				mDouble += aNumber.mDouble;
-			}
-			else
-			{
-				mDouble += aNumber.mLong;
-			}
-		}
-		else
-		{
-			if (aNumber.mFloatingPoint)
-			{
-				mFloatingPoint = true;
-				mDouble += mLong + aNumber.mDouble;
-				mLong = 0;
-			}
-			else
-			{
-				mLong += aNumber.mLong;
-			}
-		}
-		mCount += aNumber.mCount;
+		mValue = aValue;
+		mFloatingPoint = aFloatingPoint;
 	}
 
 
-	public void add(double aDouble)
+	public Number add(Number aNumber)
 	{
-		if (!mFloatingPoint)
-		{
-			mFloatingPoint = true;
-			mDouble = mLong;
-			mLong = 0;
-		}
-		mDouble += aDouble;
-		mCount++;
+		return new Number(mValue + aNumber.mValue, mFloatingPoint | aNumber.mFloatingPoint);
 	}
 
 
-	public void add(long aLong)
+	public Number add(double aValue)
 	{
-		if (mFloatingPoint)
-		{
-			mDouble += aLong;
-		}
-		else
-		{
-			mLong += aLong;
-		}
-		mCount++;
+		return new Number(mValue + aValue, true);
 	}
 
 
-	public double getDouble()
+	public Number add(long aValue)
 	{
-		return mDouble;
+		return new Number(mValue + aValue, mFloatingPoint);
 	}
 
 
-	public long getLong()
+	public Number scale(Number aNumber)
 	{
-		return mLong;
+		return new Number(mValue * aNumber.mValue, mFloatingPoint | aNumber.mFloatingPoint);
+	}
+
+
+	public Number scale(double aScale)
+	{
+		return new Number(mValue * aScale, true);
+	}
+
+
+	public Number scale(long aScale)
+	{
+		return new Number(mValue * aScale, mFloatingPoint);
+	}
+
+
+	public double getValue()
+	{
+		return mValue;
 	}
 
 
@@ -101,15 +82,29 @@ public class Number implements CellValue
 	}
 
 
-	public int getCount()
+	public boolean isUndefined()
 	{
-		return mCount;
+		return mUndefined;
 	}
 
 
 	@Override
 	public String toString()
 	{
-		return mCount == 0 ? "undefined" : mFloatingPoint ? "" + mDouble : "" + mLong;
+		return mUndefined ? "" : mFloatingPoint ? "" + mValue : "" + (long)mValue;
+	}
+
+
+	@Override
+	public Number clone()
+	{
+		try
+		{
+			return (Number)super.clone();
+		}
+		catch (CloneNotSupportedException e)
+		{
+			throw new IllegalStateException(e);
+		}
 	}
 }
