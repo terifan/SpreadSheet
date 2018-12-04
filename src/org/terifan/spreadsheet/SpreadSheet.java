@@ -1,8 +1,6 @@
 package org.terifan.spreadsheet;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import javax.swing.JComponent;
 import org.terifan.spreadsheet.ui.TableFactory;
 
@@ -10,11 +8,13 @@ import org.terifan.spreadsheet.ui.TableFactory;
 public class SpreadSheet
 {
 	private Map mMap;
+	private HashMap<Integer,String> mColumnLabels;
 
 
 	public SpreadSheet()
 	{
 		mMap = new Map();
+		mColumnLabels = new HashMap<>();
 	}
 
 
@@ -32,26 +32,25 @@ public class SpreadSheet
 
 	public void set(int aCol, int aRow, Object aValue)
 	{
-		if (aValue instanceof Double || aValue instanceof Float)
+		mMap.put(aCol, aRow, convertValue(aValue));
+	}
+
+
+	public int findRow(int aCol, Object aValue)
+	{
+		CellValue value = convertValue(aValue);
+
+		int maxRow = mMap.getMaxRow();
+
+		for (int row = 0; row <= maxRow; row++)
 		{
-			mMap.put(aCol, aRow, new Number(((java.lang.Number)aValue).doubleValue()));
+			if (value.equals(mMap.get(aCol, row)))
+			{
+				return row;
+			}
 		}
-		else if (aValue instanceof Integer || aValue instanceof Long || aValue instanceof Short || aValue instanceof Byte)
-		{
-			mMap.put(aCol, aRow, new Number(((java.lang.Number)aValue).longValue()));
-		}
-		else if (aValue instanceof Formula)
-		{
-			mMap.put(aCol, aRow, (Formula)aValue);
-		}
-		else if (aValue instanceof Number)
-		{
-			mMap.put(aCol, aRow, (Number)aValue);
-		}
-		else
-		{
-			throw new IllegalArgumentException("Unsupported: " + aValue);
-		}
+
+		return -1;
 	}
 
 
@@ -172,7 +171,14 @@ public class SpreadSheet
 
 	public String getColumnLabel(int aColumn)
 	{
-		return Character.toString((char)(65 + aColumn));
+		return mColumnLabels.getOrDefault(aColumn, Character.toString((char)(65 + aColumn)));
+	}
+
+
+	public SpreadSheet setColumnLabel(int aColumn, String aLabel)
+	{
+		mColumnLabels.put(aColumn, aLabel);
+		return this;
 	}
 
 
@@ -213,5 +219,28 @@ public class SpreadSheet
 		}
 
 		return v;
+	}
+
+
+	private CellValue convertValue(Object aValue)
+	{
+		if (aValue instanceof Double || aValue instanceof Float)
+		{
+			return new Number(((java.lang.Number)aValue).doubleValue());
+		}
+		if (aValue instanceof Integer || aValue instanceof Long || aValue instanceof Short || aValue instanceof Byte)
+		{
+			return new Number(((java.lang.Number)aValue).longValue());
+		}
+		if (aValue instanceof String)
+		{
+			return new Text((String)aValue);
+		}
+		if (aValue instanceof CellValue)
+		{
+			return (CellValue)aValue;
+		}
+
+		throw new IllegalArgumentException("Unsupported: " + aValue);
 	}
 }

@@ -13,7 +13,7 @@ public class TableFactory
 	public JComponent createTable(CellValue[][] aData, Object[] aColumns)
 	{
 		JTable table = new JTable(aData, aColumns);
-		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setColumnSelectionAllowed(true);
 		table.setRowSelectionAllowed(true);
 

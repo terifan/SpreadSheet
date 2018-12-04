@@ -20,6 +20,9 @@ public class Test
 
 			SpreadSheet ss = new SpreadSheet();
 
+			ss.setColumnLabel(0, "John");
+			ss.setColumnLabel(1, "Lisa");
+
 //			ss.set(1, 0, "sum(a0:a3");
 			ss.set(0, 0, 4);
 			ss.set(0, 1, 7);
@@ -35,6 +38,11 @@ public class Test
 			ss.set(3, 4, new Sum(new Range(new Tuple(0, 4), new Tuple(1, 4))));
 
 			ss.set(3, 6, new Subtract(new Tuple(3, 4), new Tuple(0, 0)));
+
+			ss.set(0, 8, "pig");
+			ss.set(0, 9, "cow");
+
+			System.out.println(ss.findRow(0, "pig"));
 
 			ss.print();
 

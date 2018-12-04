@@ -96,6 +96,18 @@ public class Number implements CellValue
 
 
 	@Override
+	public boolean equals(Object aOther)
+	{
+		if (aOther instanceof Number)
+		{
+			return ((Number)aOther).mValue == mValue;
+		}
+
+		return false;
+	}
+
+
+	@Override
 	public Number clone()
 	{
 		try
