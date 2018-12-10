@@ -15,6 +15,8 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	public ColumnHeaderRenderer()
 	{
 		setHorizontalAlignment(JLabel.CENTER);
+		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(0xB1B5BA)), BorderFactory.createEmptyBorder(3,3,3,3)));
+		setOpaque(true);
 	}
 
 
@@ -33,13 +35,16 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 			}
 		}
 
-		if (isSelected)
+		if (table.isColumnSelected(column))
 		{
-			setFont(getFont().deriveFont(Font.BOLD));
+			setBackground(new Color(0xFFDC61));
+		}
+		else
+		{
+			setBackground(new Color(0xF0F0F0));
 		}
 
 		setText((value == null) ? "" : value.toString());
-		setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY));
 
 		return this;
 	}

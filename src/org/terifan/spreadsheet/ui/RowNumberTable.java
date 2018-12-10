@@ -1,9 +1,10 @@
 package org.terifan.spreadsheet.ui;
 
+import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -36,11 +37,12 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		super.setFocusable(false);
 		super.setAutoCreateColumnsFromModel(false);
 		super.setSelectionModel(mTable.getSelectionModel());
+		super.setGridColor(new Color(0xB1B5BA));
 
 		TableColumn column = new TableColumn();
 		column.setHeaderValue(" ");
-		super.addColumn(column);
 		column.setCellRenderer(new RowNumberRenderer());
+		super.addColumn(column);
 
 		super.getColumnModel().getColumn(0).setPreferredWidth(50);
 		super.setPreferredScrollableViewportSize(getPreferredSize());
@@ -186,7 +188,12 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 
 			if (isSelected)
 			{
-				setFont(getFont().deriveFont(Font.BOLD));
+				setBackground(new Color(0xFFDC61));
+//				setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(0xC28A30)));
+			}
+			else
+			{
+				setBackground(new Color(0xF0F0F0));
 			}
 
 			setText((value == null) ? "" : value.toString());
