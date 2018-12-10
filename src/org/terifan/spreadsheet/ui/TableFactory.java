@@ -17,11 +17,12 @@ import org.terifan.spreadsheet.CellValue;
 
 public class TableFactory
 {
-	public JComponent createTable(CellValue[][] aData, Object[] aColumns)
+	public JScrollPane createTable(CellValue[][] aData, Object[] aColumns)
 	{
 		DefaultTableModel model = new DefaultTableModel(aData, aColumns);
 
 		JTable table = new JTable(model);
+		table.setBorder(null);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setColumnSelectionAllowed(true);
 		table.setRowSelectionAllowed(true);
@@ -67,10 +68,12 @@ public class TableFactory
 		JTable rowTable = new RowNumberTable(table);
 
 		ColumnHeaderRenderer corner = new ColumnHeaderRenderer();
+		corner.setDrawLeftBorder(true);
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setRowHeaderView(rowTable);
 		scrollPane.setCorner(JScrollPane.UPPER_LEADING_CORNER, corner);
+		scrollPane.setBorder(null);
 
 		return scrollPane;
 	}

@@ -2,7 +2,6 @@ package org.terifan.spreadsheet.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -12,11 +11,18 @@ import javax.swing.table.TableCellRenderer;
 
 public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 {
+	private boolean mLeftBorder;
+	private boolean mTopBorder;
+
+
 	public ColumnHeaderRenderer()
 	{
 		setHorizontalAlignment(JLabel.CENTER);
-		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(0xB1B5BA)), BorderFactory.createEmptyBorder(3,3,3,3)));
 		setOpaque(true);
+
+		mTopBorder = true;
+
+		update();
 	}
 
 
@@ -47,5 +53,25 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 		setText((value == null) ? "" : value.toString());
 
 		return this;
+	}
+
+
+	public void setDrawLeftBorder(boolean aState)
+	{
+		mLeftBorder = aState;
+		update();
+	}
+
+
+	public void setDrawTopBorder(boolean aState)
+	{
+		mTopBorder = aState;
+		update();
+	}
+
+
+	private void update()
+	{
+		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(mTopBorder ? 1 : 0, mLeftBorder ? 1 : 0, 1, 1, new Color(0xB1B5BA)), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
 	}
 }

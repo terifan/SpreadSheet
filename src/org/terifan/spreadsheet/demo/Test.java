@@ -8,6 +8,7 @@ import org.terifan.spreadsheet.SpreadSheet;
 import org.terifan.spreadsheet.functions.Subtract;
 import org.terifan.spreadsheet.functions.Sum;
 import org.terifan.spreadsheet.Tuple;
+import org.terifan.spreadsheet.ui.WorkBook;
 
 
 public class Test
@@ -46,8 +47,11 @@ public class Test
 
 			ss.print();
 
+			WorkBook workBook = new WorkBook();
+			workBook.addTab("Sheet1", ss);
+
 			JFrame frame = new JFrame();
-			frame.add(ss.createJTable(), BorderLayout.CENTER);
+			frame.add(workBook, BorderLayout.CENTER);
 			frame.setSize(1024, 768);
 			frame.setLocationRelativeTo(null);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

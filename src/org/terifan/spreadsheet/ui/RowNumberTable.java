@@ -197,7 +197,8 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 			}
 
 			setText((value == null) ? "" : value.toString());
-			setBorder(null);
+			setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(0xB1B5BA)));
+//			setBorder(null);
 
 			return this;
 		}

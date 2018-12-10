@@ -2,6 +2,7 @@ package org.terifan.spreadsheet;
 
 import java.util.HashMap;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import org.terifan.spreadsheet.ui.TableFactory;
 
 
@@ -144,7 +145,7 @@ public class SpreadSheet
 	}
 
 
-	public JComponent createJTable()
+	public JScrollPane createJTable()
 	{
 		long timeCode = System.nanoTime();
 		int maxRow = 1 + getMaxRow();
