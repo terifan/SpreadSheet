@@ -224,6 +224,10 @@ public class SpreadSheet
 
 	private CellValue convertValue(Object aValue)
 	{
+		if (aValue == null)
+		{
+			return new NullValue();
+		}
 		if (aValue instanceof Double || aValue instanceof Float)
 		{
 			return new Number(((java.lang.Number)aValue).doubleValue());
@@ -236,11 +240,22 @@ public class SpreadSheet
 		{
 			return new Text((String)aValue);
 		}
+		if (aValue instanceof Boolean)
+		{
+			return new BooleanValue((Boolean)aValue);
+		}
 		if (aValue instanceof CellValue)
 		{
 			return (CellValue)aValue;
 		}
+		if (aValue instanceof Enum)
+		{
+			return new EnumValue((Enum)aValue);
+		}
 
-		throw new IllegalArgumentException("Unsupported: " + aValue);
+//		throw new IllegalArgumentException("Unsupported: " + aValue.getClass());
+		System.out.println("Unsupported cell value, displaying as text: " + aValue.getClass());
+
+		return new Text(aValue.toString());
 	}
 }
