@@ -1,6 +1,7 @@
 package org.terifan.spreadsheet.demo;
 
 import java.awt.BorderLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import org.terifan.spreadsheet.Range;
@@ -49,6 +50,7 @@ public class Test
 
 			WorkBook workBook = new WorkBook();
 			workBook.addTab("Sheet1", ss);
+			workBook.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
 			JFrame frame = new JFrame();
 			frame.add(workBook, BorderLayout.CENTER);
