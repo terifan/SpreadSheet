@@ -18,14 +18,11 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 
-/*
- *	Use a JTable as a renderer for row numbers of a given main table.
- *  This table must be added to the row header of the scrollpane that
- *  contains the main table.
- */
 public class RowNumberTable extends JTable implements ChangeListener, PropertyChangeListener, TableModelListener
 {
-	private final JTable mTable;
+	private static final long serialVersionUID = 1L;
+
+	private JTable mTable;
 
 
 	public RowNumberTable(JTable aTable)
@@ -34,17 +31,16 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		mTable.addPropertyChangeListener(this);
 		mTable.getModel().addTableModelListener(this);
 
+		TableColumn column = new TableColumn();
+		column.setHeaderValue(" ");
+		column.setCellRenderer(new RowNumberRenderer());
+		column.setPreferredWidth(50);
+
 		super.setFocusable(false);
 		super.setAutoCreateColumnsFromModel(false);
 		super.setSelectionModel(mTable.getSelectionModel());
 		super.setGridColor(new Color(0xB1B5BA));
-
-		TableColumn column = new TableColumn();
-		column.setHeaderValue(" ");
-		column.setCellRenderer(new RowNumberRenderer());
 		super.addColumn(column);
-
-		super.getColumnModel().getColumn(0).setPreferredWidth(50);
 		super.setPreferredScrollableViewportSize(getPreferredSize());
 	}
 

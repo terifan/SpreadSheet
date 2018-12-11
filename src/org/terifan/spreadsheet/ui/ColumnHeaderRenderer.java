@@ -11,6 +11,8 @@ import javax.swing.table.TableCellRenderer;
 
 public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 {
+	private static final long serialVersionUID = 1L;
+
 	private boolean mLeftBorder;
 	private boolean mTopBorder;
 

@@ -9,6 +9,9 @@ import org.terifan.spreadsheet.SpreadSheet;
 
 public class WorkBook extends JTabbedPane
 {
+	private static final long serialVersionUID = 1L;
+
+	
 	public WorkBook()
 	{
 	}
@@ -16,26 +19,13 @@ public class WorkBook extends JTabbedPane
 
 	public WorkBook addTab(String aTitle, SpreadSheet aSpreadSheet)
 	{
-		ImageIcon icon = new ImageIcon(SpreadSheet.class.getResource("icon16.png"));
+		ImageIcon icon = new ImageIcon(WorkBook.class.getResource("icon16.png"));
 
-		JScrollPane scrollPane = aSpreadSheet.createJTable();
+		JScrollPane scrollPane = aSpreadSheet.createUI();
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 2));
 		scrollPane.setViewportBorder(null);
 
 		super.addTab("File", icon, scrollPane);
-//		super.addTab("File", icon, new JPanel()
-//		{
-//			{
-//				setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.WHITE));
-//			}
-//			@Override
-//			protected void paintComponent(Graphics aG)
-//			{
-//				aG.setColor(Color.red);
-//				aG.fillRect(0, 0, getWidth(), getHeight());
-//			}
-//
-//		});
 
 		return this;
 	}

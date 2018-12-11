@@ -1,21 +1,23 @@
 package org.terifan.spreadsheet;
 
-import java.util.HashMap;
-import javax.swing.JComponent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import javax.swing.JScrollPane;
+import javax.swing.table.TableColumn;
 import org.terifan.spreadsheet.ui.TableFactory;
 
 
 public class SpreadSheet
 {
 	private Map mMap;
-	private HashMap<Integer,String> mColumnLabels;
+	private ArrayList<TableColumn> mColumns;
 
 
 	public SpreadSheet()
 	{
 		mMap = new Map();
-		mColumnLabels = new HashMap<>();
+		mColumns = new ArrayList<>();
 	}
 
 
@@ -57,8 +59,8 @@ public class SpreadSheet
 
 	public void removeEmptyRows()
 	{
-		int maxCol = getMaxColumn();
-		int maxRow = getMaxRow();
+		int maxCol = lastColumn();
+		int maxRow = lastRow();
 		for (int y = 0; y < maxRow; y++)
 		{
 			boolean empty = true;
@@ -89,7 +91,7 @@ public class SpreadSheet
 	}
 
 
-	public int getMaxRow()
+	public int lastRow()
 	{
 		return mMap.getMaxRow();
 	}
@@ -101,7 +103,7 @@ public class SpreadSheet
 	}
 
 
-	public int getMaxColumn()
+	public int lastColumn()
 	{
 		return mMap.getMaxColumn();
 	}
@@ -110,15 +112,15 @@ public class SpreadSheet
 	public void print()
 	{
 		long timeCode = System.nanoTime();
-		int maxColumn = 1 + getMaxColumn();
-		int maxRow = 1 + getMaxRow();
+		int maxColumn = nextColumn();
+		int maxRow = nextRow();
 
 		System.out.print("");
 		System.out.print("\t");
 
 		for (int col = 0; col < maxColumn; col++)
 		{
-			System.out.print(getColumnLabel(col));
+			System.out.print(getColumn(col).getHeaderValue());
 			System.out.print("\t");
 		}
 		System.out.println();
@@ -145,11 +147,11 @@ public class SpreadSheet
 	}
 
 
-	public JScrollPane createJTable()
+	public JScrollPane createUI()
 	{
 		long timeCode = System.nanoTime();
-		int maxRow = 1 + getMaxRow();
-		int maxColumn = 1 + getMaxColumn();
+		int maxRow = nextRow();
+		int maxColumn = 1 + lastColumn();
 
 		CellValue[][] data = new CellValue[maxRow][maxColumn];
 		for (int row = 0; row < maxRow; row++)
@@ -160,26 +162,21 @@ public class SpreadSheet
 			}
 		}
 
-		Object[] columns = new Object[maxColumn];
-		for (int col = 0; col < maxColumn; col++)
+		return new TableFactory().createTable(data, mColumns);
+	}
+
+
+	/**
+	 * Returns the column with the index specified. This method create and add new columns when not found.
+	 */
+	public synchronized TableColumn getColumn(int aColumn)
+	{
+		while (mColumns.size() <= aColumn)
 		{
-			columns[col] = getColumnLabel(col);
+			mColumns.add(new TableColumn(mColumns.size()));
 		}
 
-		return new TableFactory().createTable(data, columns);
-	}
-
-
-	public String getColumnLabel(int aColumn)
-	{
-		return mColumnLabels.getOrDefault(aColumn, Character.toString((char)(65 + aColumn)));
-	}
-
-
-	public SpreadSheet setColumnLabel(int aColumn, String aLabel)
-	{
-		mColumnLabels.put(aColumn, aLabel);
-		return this;
+		return mColumns.get(aColumn);
 	}
 
 
@@ -253,10 +250,43 @@ public class SpreadSheet
 		{
 			return new EnumValue((Enum)aValue);
 		}
+		if (aValue instanceof Date)
+		{
+			return new DateValue((Date)aValue);
+		}
 
 //		throw new IllegalArgumentException("Unsupported: " + aValue.getClass());
 		System.out.println("Unsupported cell value, displaying as text: " + aValue.getClass());
 
 		return new Text(aValue.toString());
+	}
+
+
+	/**
+	 * Return the row number of the next free row.
+	 * <p>
+	 * Append three new rows:<br/>
+	 * <code>
+	 * ss.set(0, ss.nextRow(), "row 0, column a");<br/>
+	 * ss.set(1, ss.lastRow(), "row 0, column b");<br/>
+	 * ss.set(2, ss.lastRow(), "row 0, column c");<br/>
+	 * ss.set(0, ss.nextRow(), "row 1, column a");<br/>
+	 * ss.set(1, ss.lastRow(), "row 1, column b");<br/>
+	 * ss.set(2, ss.lastRow(), "row 1, column c");<br/>
+	 * </code>
+	 * </p>
+	 *
+	 * @return
+	 *
+	 */
+	public int nextRow()
+	{
+		return lastRow() + 1;
+	}
+
+
+	public int nextColumn()
+	{
+		return lastColumn() + 1;
 	}
 }

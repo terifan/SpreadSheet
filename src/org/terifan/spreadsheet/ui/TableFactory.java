@@ -1,7 +1,8 @@
 package org.terifan.spreadsheet.ui;
 
 import java.awt.Color;
-import javax.swing.JComponent;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -12,23 +13,40 @@ import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import org.terifan.spreadsheet.CellValue;
 
 
 public class TableFactory
 {
-	public JScrollPane createTable(CellValue[][] aData, Object[] aColumns)
+	public JScrollPane createTable(CellValue[][] aData, List<TableColumn> aColumns)
 	{
-		DefaultTableModel model = new DefaultTableModel(aData, aColumns);
+		DefaultTableModel model = new DefaultTableModel(aData, aColumns.stream().map(e->e.getHeaderValue()).collect(Collectors.toList()).toArray());
 
 		JTable table = new JTable(model);
 		table.setBorder(null);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		table.setColumnSelectionAllowed(true);
+		table.setColumnSelectionAllowed(false);
 		table.setRowSelectionAllowed(true);
 		table.setGridColor(new Color(0xDADCDD));
 		table.setRowHeight(19);
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		ListSelectionModel selectionModel = table.getSelectionModel();
+
+		TableColumnModel columnModel = table.getColumnModel();
+		columnModel.setColumnSelectionAllowed(true);
+		for (int i = 0; i < aColumns.size(); i++)
+		{
+			columnModel.removeColumn(columnModel.getColumn(0));
+		}
+		for (int i = 0; i < aColumns.size(); i++)
+		{
+			columnModel.addColumn(aColumns.get(i));
+		}
+
+		selectionModel.addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
 			public void valueChanged(ListSelectionEvent aEvent)
@@ -36,7 +54,8 @@ public class TableFactory
 				table.getTableHeader().repaint();
 			}
 		});
-		table.getColumnModel().addColumnModelListener(new TableColumnModelListener()
+
+		columnModel.addColumnModelListener(new TableColumnModelListener()
 		{
 			@Override
 			public void columnAdded(TableColumnModelEvent aE)
