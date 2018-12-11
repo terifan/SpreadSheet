@@ -1,23 +1,26 @@
 package org.terifan.spreadsheet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import javax.swing.JScrollPane;
-import javax.swing.table.TableColumn;
 import org.terifan.spreadsheet.ui.TableFactory;
 
 
 public class SpreadSheet
 {
 	private Map mMap;
-	private ArrayList<TableColumn> mColumns;
+	private ArrayList<SpreadSheetTableColumn> mColumns;
+	private int mRowHeaderSize;
+	private String mRowHeaderTitle;
+	private HashMap<Integer,String> mRowHeaders;
 
 
 	public SpreadSheet()
 	{
 		mMap = new Map();
 		mColumns = new ArrayList<>();
+		mRowHeaders = new HashMap<>();
 	}
 
 
@@ -162,21 +165,31 @@ public class SpreadSheet
 			}
 		}
 
-		return new TableFactory().createTable(data, mColumns);
+		return new TableFactory().createTable(data, mColumns, 0, mRowHeaderTitle, mRowHeaderSize, mRowHeaders);
 	}
 
 
 	/**
 	 * Returns the column with the index specified. This method create and add new columns when not found.
 	 */
-	public synchronized TableColumn getColumn(int aColumn)
+	public synchronized SpreadSheetTableColumn getColumn(int aColumn)
 	{
 		while (mColumns.size() <= aColumn)
 		{
-			mColumns.add(new TableColumn(mColumns.size()));
+			mColumns.add(new SpreadSheetTableColumn(mColumns.size()));
 		}
 
 		return mColumns.get(aColumn);
+	}
+
+
+	public void setColumn(SpreadSheetTableColumn aColumn)
+	{
+		while (mColumns.size() <= aColumn.getModelIndex())
+		{
+			mColumns.add(new SpreadSheetTableColumn(mColumns.size()));
+		}
+		mColumns.set(aColumn.getModelIndex(), aColumn);
 	}
 
 
@@ -288,5 +301,23 @@ public class SpreadSheet
 	public int nextColumn()
 	{
 		return lastColumn() + 1;
+	}
+
+
+	public void setRowHeaderSize(int aRowHeaderSize)
+	{
+		mRowHeaderSize = aRowHeaderSize;
+	}
+
+
+	public void setRowHeaderTitle(String aRowHeaderTitle)
+	{
+		mRowHeaderTitle = aRowHeaderTitle;
+	}
+
+
+	public void setRowHeader(int aRowIndex, String aRowHeader)
+	{
+		mRowHeaders.put(aRowIndex, aRowHeader);
 	}
 }

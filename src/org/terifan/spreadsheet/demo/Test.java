@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import org.terifan.spreadsheet.Range;
 import org.terifan.spreadsheet.SpreadSheet;
+import org.terifan.spreadsheet.SpreadSheetTableColumn;
 import org.terifan.spreadsheet.functions.Subtract;
 import org.terifan.spreadsheet.functions.Sum;
 import org.terifan.spreadsheet.Tuple;
@@ -21,10 +22,18 @@ public class Test
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 			SpreadSheet ss = new SpreadSheet();
-			ss.getColumn(0).setHeaderValue("John");
-			ss.getColumn(1).setHeaderValue("Lisa");
-			ss.getColumn(3).setHeaderValue("Total");
-			ss.getColumn(3).setPreferredWidth(200);
+			ss.setColumn(new SpreadSheetTableColumn(0, "John"));
+			ss.setColumn(new SpreadSheetTableColumn(1, "Lisa"));
+			ss.setColumn(new SpreadSheetTableColumn(3, "Total", 200));
+
+			ss.setRowHeaderSize(50);
+			ss.setRowHeaderTitle("alpha");
+			ss.setRowHeader(0, "q");
+			ss.setRowHeader(1, "w");
+			ss.setRowHeader(2, "e");
+			ss.setRowHeader(3, "r");
+			ss.setRowHeader(4, "t");
+			ss.setRowHeader(5, "y");
 
 //			ss.set(1, 0, "sum(a0:a3");
 			ss.set(0, 0, 4);

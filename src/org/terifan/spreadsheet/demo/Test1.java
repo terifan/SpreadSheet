@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import org.terifan.spreadsheet.Range;
 import org.terifan.spreadsheet.SpreadSheet;
+import org.terifan.spreadsheet.SpreadSheetTableColumn;
 import org.terifan.spreadsheet.functions.Sum;
 import org.terifan.spreadsheet.Tuple;
 import org.terifan.spreadsheet.ui.WorkBook;
@@ -22,9 +23,9 @@ public class Test1
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 			SpreadSheet ss = new SpreadSheet();
-			ss.getColumn(0).setHeaderValue("File Name");
-			ss.getColumn(1).setHeaderValue("Last Modified");
-			ss.getColumn(2).setHeaderValue("Length");
+			ss.setColumn(new SpreadSheetTableColumn(0, "File Name", 200));
+			ss.setColumn(new SpreadSheetTableColumn(1, "Last Modified", 150));
+			ss.setColumn(new SpreadSheetTableColumn(2, "Length", 120));
 
 			for (File file : new File("c:\\").listFiles())
 			{
