@@ -24,6 +24,11 @@ public class TableFactory
 {
 	public JScrollPane createTable(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns, int aNumStaticColumns, String aRowHeaderTitle, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders)
 	{
+		if (aRowHeaders.isEmpty())
+		{
+			aRowHeaderSize = 0;
+		}
+
 		SpreadSheetTableColumn[] dataColumns = new SpreadSheetTableColumn[aColumns.size() - aNumStaticColumns];
 		SpreadSheetTableColumn[] staticColumns = new SpreadSheetTableColumn[aNumStaticColumns];
 

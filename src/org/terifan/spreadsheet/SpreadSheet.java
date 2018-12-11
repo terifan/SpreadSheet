@@ -21,6 +21,8 @@ public class SpreadSheet
 		mMap = new Map();
 		mColumns = new ArrayList<>();
 		mRowHeaders = new HashMap<>();
+
+		mRowHeaderSize = 50;
 	}
 
 

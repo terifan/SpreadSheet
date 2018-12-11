@@ -26,7 +26,7 @@ public class Test
 			ss.setColumn(new SpreadSheetTableColumn(1, "Lisa"));
 			ss.setColumn(new SpreadSheetTableColumn(3, "Total", 200));
 
-			ss.setRowHeaderSize(50);
+//			ss.setRowHeaderSize(50);
 			ss.setRowHeaderTitle("alpha");
 			ss.setRowHeader(0, "q");
 			ss.setRowHeader(1, "w");
