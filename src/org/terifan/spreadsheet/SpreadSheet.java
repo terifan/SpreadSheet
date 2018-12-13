@@ -13,6 +13,7 @@ public class SpreadSheet
 	private ArrayList<SpreadSheetTableColumn> mColumns;
 	private int mRowHeaderSize;
 	private int mRowNumberSize;
+	private int mStaticColumnCount;
 	private String mRowHeaderTitle;
 	private HashMap<Integer,String> mRowHeaders;
 
@@ -25,6 +26,7 @@ public class SpreadSheet
 
 		mRowNumberSize = 50;
 		mRowHeaderSize = 75;
+		mStaticColumnCount = 0;
 	}
 
 
@@ -169,7 +171,7 @@ public class SpreadSheet
 			}
 		}
 
-		return new TableFactory().createTable(data, mColumns, 2, mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mRowHeaders);
+		return new TableFactory().createTable(data, mColumns, mStaticColumnCount, mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mRowHeaders);
 	}
 
 
@@ -314,9 +316,10 @@ public class SpreadSheet
 	}
 
 
-	public void setRowNumberSize(int aRowNumberSize)
+	public SpreadSheet setRowNumberSize(int aRowNumberSize)
 	{
 		mRowNumberSize = aRowNumberSize;
+		return this;
 	}
 
 
@@ -326,15 +329,42 @@ public class SpreadSheet
 	}
 
 
-	public void setRowHeaderSize(int aRowHeaderSize)
+	public SpreadSheet setRowHeaderSize(int aRowHeaderSize)
 	{
 		mRowHeaderSize = aRowHeaderSize;
+		return this;
 	}
 
 
-	public void setRowHeaderTitle(String aRowHeaderTitle)
+	public String getRowHeaderTitle()
+	{
+		return mRowHeaderTitle;
+	}
+
+
+	public SpreadSheet setRowHeaderTitle(String aRowHeaderTitle)
 	{
 		mRowHeaderTitle = aRowHeaderTitle;
+		return this;
+	}
+
+
+	public int getStaticColumnCount()
+	{
+		return mStaticColumnCount;
+	}
+
+
+	public SpreadSheet setStaticColumnCount(int aStaticColumnCount)
+	{
+		mStaticColumnCount = aStaticColumnCount;
+		return this;
+	}
+
+
+	public String getRowHeaders(int aRowIndex)
+	{
+		return mRowHeaders.get(aRowIndex);
 	}
 
 
