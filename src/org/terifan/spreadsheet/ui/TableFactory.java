@@ -29,6 +29,8 @@ public class TableFactory
 			aRowHeaderSize = 0;
 		}
 
+		addMissingColumns(aData, aColumns);
+
 		SpreadSheetTableColumn[] dataColumns = new SpreadSheetTableColumn[aColumns.size() - aNumStaticColumns];
 		SpreadSheetTableColumn[] staticColumns = new SpreadSheetTableColumn[aNumStaticColumns];
 
@@ -38,7 +40,7 @@ public class TableFactory
 		}
 		for (int i = aNumStaticColumns, j = 0; i < aColumns.size(); i++, j++)
 		{
-			dataColumns[j] = aColumns.get(i);
+			dataColumns[j] = i >= aColumns.size() ? new SpreadSheetTableColumn(i) : aColumns.get(i);
 		}
 
 		CellValue[][] staticData = aData;
@@ -126,5 +128,21 @@ public class TableFactory
 		scrollPane.setBorder(null);
 
 		return scrollPane;
+	}
+
+
+	private void addMissingColumns(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns)
+	{
+		int columnCount = 0;
+
+		for (CellValue[] row : aData)
+		{
+			columnCount = Math.max(columnCount, row.length);
+		}
+
+		while (columnCount > aColumns.size())
+		{
+			aColumns.add(new SpreadSheetTableColumn(aColumns.size(), Character.toString((char)('A' + aColumns.size()))));
+		}
 	}
 }
