@@ -26,11 +26,10 @@ public class Test
 			ss.setColumn(new SpreadSheetTableColumn(1, "Lisa"));
 			ss.setColumn(new SpreadSheetTableColumn(3, "Total", 200));
 
-//			ss.setRowHeaderSize(50);
 			ss.setRowHeaderTitle("alpha");
 			ss.setRowHeader(0, "q");
 			ss.setRowHeader(1, "w");
-			ss.setRowHeader(2, "e");
+			ss.setRowHeader(2, "eaxa");
 			ss.setRowHeader(3, "r");
 			ss.setRowHeader(4, "t");
 			ss.setRowHeader(5, "y");

@@ -3,8 +3,9 @@ package org.terifan.spreadsheet.ui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.util.HashMap;
-import java.util.List;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -23,10 +24,15 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	private int mNumStaticColumns;
 	private String mRowHeaderTitle;
 	private int mRowHeaderSize;
+	private int mRowNumberSize;
 
 
-	public ColumnHeaderRenderer()
+	public ColumnHeaderRenderer(String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize)
 	{
+		mRowHeaderTitle = aRowHeaderTitle;
+		mRowNumberSize = aRowNumberSize;
+		mRowHeaderSize = aRowHeaderSize;
+
 		setHorizontalAlignment(JLabel.CENTER);
 		setOpaque(true);
 
@@ -37,11 +43,11 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 
 
 	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+	public Component getTableCellRendererComponent(JTable aTable, Object value, boolean isSelected, boolean hasFocus, int row, int column)
 	{
-		if (table != null)
+		if (aTable != null)
 		{
-			JTableHeader header = table.getTableHeader();
+			JTableHeader header = aTable.getTableHeader();
 
 			if (header != null)
 			{
@@ -51,7 +57,7 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 			}
 		}
 
-		if (table.isColumnSelected(column))
+		if (aTable.isColumnSelected(column))
 		{
 			setBackground(new Color(0xFFDC61));
 		}
@@ -71,7 +77,7 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	{
 		if (mNumStaticColumns > 0 || mRowHeaderSize > 0)
 		{
-			int x = 50;
+			int x = mRowNumberSize;
 			int h = getHeight();
 
 			aGraphics.setColor(new Color(0xF0F0F0));
@@ -84,23 +90,24 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 				int w = mRowHeaderSize;
 
 				aGraphics.setColor(Color.BLACK);
-				aGraphics.drawString(mRowHeaderTitle, x + 5, 15);
+				TextPainter.drawString(mRowHeaderTitle, x + 2, 0, w - 4, getHeight(), true, aGraphics);
 
 				x += mRowHeaderSize;
 			}
 
 			for (int i = 0; i < mNumStaticColumns; i++)
 			{
-				int z = mStaticColumns[i].getPreferredWidth();
+				int w = mStaticColumns[i].getPreferredWidth();
 
-				String data = "" + mStaticColumns[i].getHeaderValue();
+				String text = "" + mStaticColumns[i].getHeaderValue();
 
-				aGraphics.setColor(Color.BLACK);
-				aGraphics.drawString(data, x + 5, 15);
 				aGraphics.setColor(new Color(0xB1B5BA));
 				aGraphics.drawLine(x, 0, x, h);
 
-				x += z;
+				aGraphics.setColor(Color.BLACK);
+				TextPainter.drawString(text, x + 2, 0, w - 4, getHeight(), true, aGraphics);
+
+				x += w;
 			}
 		}
 		else
@@ -134,12 +141,5 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	{
 		mStaticColumns = aStaticColumns;
 		mNumStaticColumns = aNumStaticColumns;
-	}
-
-
-	void setRowHeaders(String aRowHeaderTitle, int aRowHeaderSize)
-	{
-		mRowHeaderTitle = aRowHeaderTitle;
-		mRowHeaderSize = aRowHeaderSize;
 	}
 }

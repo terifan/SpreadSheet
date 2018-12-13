@@ -3,6 +3,8 @@ package org.terifan.spreadsheet.ui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -31,17 +33,17 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	private SpreadSheetTableColumn[] mStaticColumns;
 	private CellValue[][] mStaticData;
 	private int mNumStaticColumns;
-	private int mColumnWidth;
+	private int mRowNumberSize;
 	private int mRowHeaderSize;
 	private HashMap<Integer, String> mRowHeaders;
 
 
-	public RowNumberTable(JTable aTable, CellValue[][] aStaticData, SpreadSheetTableColumn[] aStaticColumns, int aNumStaticColumns, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders)
+	public RowNumberTable(JTable aTable, CellValue[][] aStaticData, SpreadSheetTableColumn[] aStaticColumns, int aNumStaticColumns, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders)
 	{
 		mStaticColumns = aStaticColumns;
 		mStaticData = aStaticData;
 		mNumStaticColumns = aNumStaticColumns;
-
+		mRowNumberSize = aRowNumberSize;
 		mRowHeaderSize = aRowHeaderSize;
 		mRowHeaders = aRowHeaders;
 
@@ -49,9 +51,8 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		mTable.addPropertyChangeListener(this);
 		mTable.getModel().addTableModelListener(this);
 
-		mColumnWidth = 50;
+		int width = mRowNumberSize + mRowHeaderSize;
 
-		int width = mColumnWidth + mRowHeaderSize;
 		for (int i = 0; i < mNumStaticColumns; i++)
 		{
 			width += mStaticColumns[i].getPreferredWidth();
@@ -246,19 +247,22 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		{
 			if (mNumStaticColumns > 0 || mRowHeaderSize > 0)
 			{
+				((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
 				int h = getHeight();
 
 				aGraphics.setColor(new Color(0xF0F0F0));
-				aGraphics.fillRect(0, 0, mColumnWidth, h);
+				aGraphics.fillRect(0, 0, mRowNumberSize + mRowHeaderSize, h);
 
 				aGraphics.setColor(Color.BLACK);
-				aGraphics.drawString(getText(), mColumnWidth/2, 14);
+				TextPainter.drawString(getText(), 0, 0, mRowNumberSize, getHeight(), true, aGraphics);
+
+				int x = mRowNumberSize;
 
 				if (mRowHeaderSize > 0)
 				{
-					String data = mRowHeaders.getOrDefault(mRow, "");
+					String text = mRowHeaders.getOrDefault(mRow, "");
 
-					int x = mColumnWidth;
 					int w = mRowHeaderSize;
 
 					aGraphics.setColor(new Color(0xF0F0F0));
@@ -267,14 +271,16 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 					aGraphics.drawLine(x, 0, x, h);
 
 					aGraphics.setColor(Color.BLACK);
-					aGraphics.drawString(data, x + 5, 14);
+					TextPainter.drawString(text, x + 2, 0, w - 4, getHeight(), false, aGraphics);
+
+					x += w;
 				}
 
-				for (int i = 0, x = mColumnWidth + mRowHeaderSize; i < mNumStaticColumns; i++)
+				for (int i = 0; i < mNumStaticColumns; i++)
 				{
 					int w = mStaticColumns[i].getPreferredWidth();
 
-					String data = mStaticData[mRow][i] == null ? "" : mStaticData[mRow][i].toString();
+					String text = mStaticData[mRow][i] == null ? "" : mStaticData[mRow][i].toString();
 
 					aGraphics.setColor(new Color(0xFFFFFF));
 					aGraphics.fillRect(x, 0, w, h);
@@ -282,7 +288,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 					aGraphics.drawLine(x, 0, x, h);
 
 					aGraphics.setColor(Color.BLACK);
-					aGraphics.drawString(data, x + 5, 14);
+					TextPainter.drawString(text, x + 2, 0, w - 4, getHeight(), false, aGraphics);
 
 					x += w;
 				}

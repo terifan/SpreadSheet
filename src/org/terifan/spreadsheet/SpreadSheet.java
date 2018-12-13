@@ -12,6 +12,7 @@ public class SpreadSheet
 	private Map mMap;
 	private ArrayList<SpreadSheetTableColumn> mColumns;
 	private int mRowHeaderSize;
+	private int mRowNumberSize;
 	private String mRowHeaderTitle;
 	private HashMap<Integer,String> mRowHeaders;
 
@@ -22,7 +23,8 @@ public class SpreadSheet
 		mColumns = new ArrayList<>();
 		mRowHeaders = new HashMap<>();
 
-		mRowHeaderSize = 50;
+		mRowNumberSize = 50;
+		mRowHeaderSize = 75;
 	}
 
 
@@ -167,7 +169,7 @@ public class SpreadSheet
 			}
 		}
 
-		return new TableFactory().createTable(data, mColumns, 0, mRowHeaderTitle, mRowHeaderSize, mRowHeaders);
+		return new TableFactory().createTable(data, mColumns, 2, mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mRowHeaders);
 	}
 
 
@@ -303,6 +305,24 @@ public class SpreadSheet
 	public int nextColumn()
 	{
 		return lastColumn() + 1;
+	}
+
+
+	public int getRowNumberSize()
+	{
+		return mRowNumberSize;
+	}
+
+
+	public void setRowNumberSize(int aRowNumberSize)
+	{
+		mRowNumberSize = aRowNumberSize;
+	}
+
+
+	public int getRowHeaderSize()
+	{
+		return mRowHeaderSize;
 	}
 
 

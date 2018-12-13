@@ -17,12 +17,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import org.terifan.spreadsheet.CellValue;
+import org.terifan.spreadsheet.SpreadSheet;
 import org.terifan.spreadsheet.SpreadSheetTableColumn;
 
 
 public class TableFactory
 {
-	public JScrollPane createTable(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns, int aNumStaticColumns, String aRowHeaderTitle, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders)
+	public JScrollPane createTable(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns, int aNumStaticColumns, String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders)
 	{
 		if (aRowHeaders.isEmpty())
 		{
@@ -112,15 +113,14 @@ public class TableFactory
 
 		JTableHeader tableHeader = table.getTableHeader();
 		tableHeader.setReorderingAllowed(false);
-		tableHeader.setDefaultRenderer(new ColumnHeaderRenderer());
+		tableHeader.setDefaultRenderer(new ColumnHeaderRenderer("", aRowNumberSize, 0));
 
-		RowNumberTable rowTable = new RowNumberTable(table, staticData, staticColumns, aNumStaticColumns, aRowHeaderSize, aRowHeaders);
+		RowNumberTable rowTable = new RowNumberTable(table, staticData, staticColumns, aNumStaticColumns, aRowNumberSize, aRowHeaderSize, aRowHeaders);
 		rowTable.setDrawLeftBorder(true);
 
-		ColumnHeaderRenderer corner = new ColumnHeaderRenderer();
+		ColumnHeaderRenderer corner = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
 		corner.setDrawLeftBorder(true);
 		corner.setStaticColumns(staticColumns, aNumStaticColumns);
-		corner.setRowHeaders(aRowHeaderTitle, aRowHeaderSize);
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setRowHeaderView(rowTable);
