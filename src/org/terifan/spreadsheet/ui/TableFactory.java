@@ -1,6 +1,10 @@
 package org.terifan.spreadsheet.ui;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Shape;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,17 +17,19 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
+import org.terifan.spreadsheet.CellStyle;
 import org.terifan.spreadsheet.CellValue;
-import org.terifan.spreadsheet.SpreadSheet;
+import org.terifan.spreadsheet.Map;
 import org.terifan.spreadsheet.SpreadSheetTableColumn;
 
 
 public class TableFactory
 {
-	public JScrollPane createTable(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns, int aNumStaticColumns, String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders)
+	public JScrollPane createTable(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns, int aNumStaticColumns, String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders, Map<CellStyle> aStyles)
 	{
 		if (aRowHeaders.isEmpty())
 		{
@@ -61,6 +67,243 @@ public class TableFactory
 		table.setGridColor(new Color(0xDADCDD));
 		table.setRowHeight(19);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.setShowGrid(false);
+		table.setIntercellSpacing(new Dimension(0,0));
+
+		CellStyle DEFAULT = new CellStyle().setForegroundColor(table.getForeground()).setBackgroundColor(table.getBackground()).setFont(table.getFont());
+
+		table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer()
+		{
+			private boolean mSelected;
+			private boolean mHasFocus;
+			private int mRow;
+			private int mColumn;
+			private int mColumnX;
+
+
+			@Override
+			public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aSelected, boolean aFocused, int aRow, int aColumn)
+			{
+				mRow = aRow;
+				mColumnX = aColumn;
+				mColumn = aNumStaticColumns + aColumn;
+				mSelected = aSelected;
+				mHasFocus = aFocused;
+
+				Component comp = super.getTableCellRendererComponent(aTable, aValue, aSelected, aFocused, aRow, aColumn);
+
+				aColumn += aNumStaticColumns;
+
+//				if (!aIsSelected)
+				{
+					CellStyle style = aStyles.get(aColumn, aRow);
+
+					(style == null ? DEFAULT : style).apply(comp);
+				}
+
+				return comp;
+			}
+
+
+			@Override
+			protected void paintBorder(Graphics aGraphics)
+			{
+				Color colorRight = null;
+				Color colorBottom = null;
+				Color colorRightBottom = null;
+
+				CellStyle style = aStyles.get(mColumn, mRow);
+				if (style != null && style.getBackgroundColor() != null)
+				{
+					colorRight = style.getBackgroundColor();
+					colorBottom = style.getBackgroundColor();
+					colorRightBottom = style.getBackgroundColor();
+				}
+
+				if (colorBottom == null)
+				{
+					style = aStyles.get(mColumn, mRow + 1);
+					if (style != null && style.getBackgroundColor() != null)
+					{
+						colorBottom = style.getBackgroundColor();
+					}
+				}
+
+				if (colorRight == null)
+				{
+					style = aStyles.get(mColumn + 1, mRow);
+					if (style != null && style.getBackgroundColor() != null)
+					{
+						colorRight = style.getBackgroundColor();
+					}
+				}
+
+				if (colorRightBottom == null)
+				{
+					style = aStyles.get(mColumn + 1, mRow);
+					if (style != null && style.getBackgroundColor() != null)
+					{
+						colorRightBottom = style.getBackgroundColor();
+					}
+				}
+				if (colorRightBottom == null)
+				{
+					style = aStyles.get(mColumn, mRow + 1);
+					if (style != null && style.getBackgroundColor() != null)
+					{
+						colorRightBottom = style.getBackgroundColor();
+					}
+				}
+				if (colorRightBottom == null)
+				{
+					style = aStyles.get(mColumn + 1, mRow + 1);
+					if (style != null && style.getBackgroundColor() != null)
+					{
+						colorRightBottom = style.getBackgroundColor();
+					}
+				}
+
+				aGraphics.setColor(colorRight == null ? new Color(0xDADCDD) : colorRight);
+				aGraphics.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 2);
+
+				aGraphics.setColor(colorBottom == null ? new Color(0xDADCDD) : colorBottom);
+				aGraphics.drawLine(0, getHeight() - 1, getWidth() - 2, getHeight() - 1);
+
+				aGraphics.setColor(colorRightBottom == null ? new Color(0xDADCDD) : colorRightBottom);
+				aGraphics.drawLine(getWidth() - 1, getHeight() - 1, getWidth() - 1, getHeight() - 1);
+
+				if (table.isCellSelected(mRow, mColumnX))
+				{
+					aGraphics.setColor(Color.BLACK);
+					if (!table.isCellSelected(mRow, mColumnX+1))
+					{
+						aGraphics.drawLine(getWidth() - 2, 0, getWidth() - 2, getHeight() - 2);
+					}
+					if (!table.isCellSelected(mRow+1, mColumnX))
+					{
+						aGraphics.drawLine(0, getHeight() - 2, getWidth() - 2, getHeight() - 2);
+					}
+					if (!table.isCellSelected(mRow-1, mColumnX))
+					{
+						aGraphics.drawLine(0, 0, getWidth() - 1, 0);
+					}
+					if (!table.isCellSelected(mRow, mColumnX-1))
+					{
+						aGraphics.drawLine(0, 0, 0, getHeight() - 1);
+					}
+			if (table.isCellSelected(mRow, mColumnX+1) && !table.isCellSelected(mRow+1, mColumnX+1))
+			{
+				aGraphics.drawLine(getWidth()-1, getHeight()-2, getWidth()-1, getHeight() - 2);
+			}
+			if (table.isCellSelected(mRow+1, mColumnX) && !table.isCellSelected(mRow+1, mColumnX+1))
+			{
+				aGraphics.drawLine(getWidth()-2, getHeight()-1, getWidth()-2, getHeight() - 1);
+			}
+					aGraphics.setColor(Color.DARK_GRAY);
+					if (!table.isCellSelected(mRow, mColumnX+1))
+					{
+						aGraphics.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
+					}
+					if (!table.isCellSelected(mRow+1, mColumnX))
+					{
+						aGraphics.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
+					}
+				}
+				if (table.isCellSelected(mRow, mColumnX + 1))
+				{
+					if (!table.isCellSelected(mRow, mColumnX))
+					{
+						aGraphics.setColor(Color.BLACK);
+						aGraphics.drawLine(getWidth() - 2, 0, getWidth() - 2, getHeight() - 1);
+						aGraphics.setColor(Color.DARK_GRAY);
+						aGraphics.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
+					}
+				}
+				if (table.isCellSelected(mRow+1, mColumnX))
+				{
+					if (!table.isCellSelected(mRow, mColumnX))
+					{
+						aGraphics.setColor(Color.BLACK);
+						aGraphics.drawLine(0, getHeight()-2, getWidth() - 1, getHeight() - 2);
+						aGraphics.setColor(Color.DARK_GRAY);
+						aGraphics.drawLine(0, getHeight()-1, getWidth() - 1, getHeight() - 1);
+					}
+				}
+				if (table.isCellSelected(mRow+1, mColumnX+1))
+				{
+					if (!table.isCellSelected(mRow, mColumnX))
+					{
+						aGraphics.setColor(Color.BLACK);
+						aGraphics.drawLine(getWidth()-2, getHeight()-2, getWidth() - 2, getHeight() - 2);
+						aGraphics.drawLine(getWidth()-1, getHeight()-2, getWidth() - 1, getHeight() - 2);
+						aGraphics.setColor(Color.DARK_GRAY);
+						aGraphics.drawLine(getWidth()-1, getHeight()-1, getWidth() - 1, getHeight() - 1);
+					}
+					if (!table.isCellSelected(mRow, mColumnX) && !table.isCellSelected(mRow, mColumnX-1))
+					{
+						aGraphics.setColor(Color.DARK_GRAY);
+						aGraphics.drawLine(getWidth()-2, getHeight()-1, getWidth() - 2, getHeight() - 1);
+					}
+				}
+				if (table.isCellSelected(mRow+1, mColumnX-1))
+				{
+					if (!table.isCellSelected(mRow, mColumnX))
+					{
+					aGraphics.setColor(Color.BLACK);
+					aGraphics.drawLine(0, getHeight()-2, 0, getHeight() - 2);
+					}
+					if (!table.isCellSelected(mRow, mColumnX) && !table.isCellSelected(mRow+1, mColumnX))
+					{
+					aGraphics.setColor(Color.BLACK);
+					aGraphics.drawLine(0, getHeight()-1, 0, getHeight() - 1);
+					}
+				}
+				if (table.isCellSelected(mRow, mColumnX-1))
+				{
+					if (!table.isCellSelected(mRow, mColumnX))
+					{
+					aGraphics.setColor(Color.BLACK);
+					aGraphics.drawLine(0, 0, 0, getHeight() - 1);
+					}
+				}
+				if (table.isCellSelected(mRow-1, mColumnX+1))
+				{
+					if (!table.isCellSelected(mRow, mColumnX))
+					{
+					aGraphics.setColor(Color.BLACK);
+					aGraphics.drawLine(getWidth()-2, 0, getWidth()-2, 0);
+					}
+					if (!table.isCellSelected(mRow, mColumnX) && !table.isCellSelected(mRow, mColumnX+1))
+					{
+					aGraphics.setColor(Color.BLACK);
+					aGraphics.drawLine(getWidth()-1, 0, getWidth()-1, 0);
+					}
+				}
+				if (table.isCellSelected(mRow-1, mColumnX))
+				{
+					if (!table.isCellSelected(mRow, mColumnX))
+					{
+					aGraphics.setColor(Color.BLACK);
+					aGraphics.drawLine(0, 0, getWidth()-1, 0);
+					}
+				}
+				if (table.isCellSelected(mRow-1, mColumnX-1))
+				{
+					if (!table.isCellSelected(mRow, mColumnX))
+					{
+					aGraphics.setColor(Color.BLACK);
+					aGraphics.drawLine(0, 0, 0, 0);
+					}
+				}
+			}
+
+
+			@Override
+			protected void paintComponent(Graphics aGraphics)
+			{
+				super.paintComponent(aGraphics);
+			}
+		});
 
 		ListSelectionModel selectionModel = table.getSelectionModel();
 
@@ -83,6 +326,7 @@ public class TableFactory
 			public void valueChanged(ListSelectionEvent aEvent)
 			{
 				table.getTableHeader().repaint();
+				table.repaint();
 			}
 		});
 
@@ -108,6 +352,7 @@ public class TableFactory
 			public void columnSelectionChanged(ListSelectionEvent aE)
 			{
 				table.getTableHeader().repaint();
+				table.repaint();
 			}
 		});
 
@@ -118,13 +363,16 @@ public class TableFactory
 		RowNumberTable rowTable = new RowNumberTable(table, staticData, staticColumns, aNumStaticColumns, aRowNumberSize, aRowHeaderSize, aRowHeaders);
 		rowTable.setDrawLeftBorder(true);
 
-		ColumnHeaderRenderer corner = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
-		corner.setDrawLeftBorder(true);
-		corner.setStaticColumns(staticColumns, aNumStaticColumns);
+		ColumnHeaderRenderer cornerLeft = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
+		cornerLeft.setDrawLeftBorder(true);
+		cornerLeft.setStaticColumns(staticColumns, aNumStaticColumns);
+
+//		ColumnHeaderRenderer cornerRight = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setRowHeaderView(rowTable);
-		scrollPane.setCorner(JScrollPane.UPPER_LEADING_CORNER, corner);
+		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerLeft);
+//		scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, cornerRight);
 		scrollPane.setBorder(null);
 
 		return scrollPane;

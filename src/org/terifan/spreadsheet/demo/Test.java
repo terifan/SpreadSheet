@@ -1,9 +1,11 @@
 package org.terifan.spreadsheet.demo;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+import org.terifan.spreadsheet.CellStyle;
 import org.terifan.spreadsheet.Range;
 import org.terifan.spreadsheet.SpreadSheet;
 import org.terifan.spreadsheet.SpreadSheetTableColumn;
@@ -31,7 +33,7 @@ public class Test
 			ss.setRowHeaderTitle("alpha");
 			ss.setRowHeader(0, "q");
 			ss.setRowHeader(1, "w");
-			ss.setRowHeader(2, "eaxa");
+			ss.setRowHeader(2, "e");
 			ss.setRowHeader(3, "r");
 			ss.setRowHeader(4, "t");
 			ss.setRowHeader(5, "y");
@@ -52,7 +54,22 @@ public class Test
 
 			ss.set(3, 6, new Subtract(new Tuple(3, 4), new Tuple(0, 0)));
 
-			ss.print();
+			ss.set(3, 40, 1);
+			ss.set(40, 3, 1);
+
+			ss.setStyle(3, 0, CellStyle.GOOD);
+			ss.setStyle(3, 2, CellStyle.BAD);
+			ss.setStyle(3, 4, CellStyle.NEUTRAL);
+
+			ss.setStyle(3, 6, CellStyle.BAD);
+			ss.setStyle(3, 7, CellStyle.GOOD);
+
+			ss.setStyle(5, 6, CellStyle.BAD);
+			ss.setStyle(5, 7, CellStyle.GOOD);
+			ss.setStyle(6, 6, CellStyle.NEUTRAL);
+			ss.setStyle(6, 7, CellStyle.NEUTRAL);
+
+//			ss.print();
 
 			WorkBook workBook = new WorkBook();
 			workBook.addTab("Sheet1", ss);

@@ -2,7 +2,7 @@ package org.terifan.spreadsheet.functions;
 
 import org.terifan.spreadsheet.CellValue;
 import org.terifan.spreadsheet.Formula;
-import org.terifan.spreadsheet.Number;
+import org.terifan.spreadsheet.NumberValue;
 import org.terifan.spreadsheet.SpreadSheet;
 import org.terifan.spreadsheet.Tuple;
 
@@ -12,7 +12,7 @@ public class Subtract implements Formula
 {
 	private Tuple mSource1;
 	private Tuple mSource2;
-	private Number mValue;
+	private NumberValue mValue;
 	private long mTimeCode;
 
 
@@ -34,8 +34,8 @@ public class Subtract implements Formula
 			}
 			mTimeCode = Long.MIN_VALUE;
 
-			Number v0 = aSpreadSheet.getComputedNumber(mSource1, aTimeCode);
-			Number v1 = aSpreadSheet.getComputedNumber(mSource2, aTimeCode);
+			NumberValue v0 = aSpreadSheet.getComputedNumber(mSource1, aTimeCode);
+			NumberValue v1 = aSpreadSheet.getComputedNumber(mSource2, aTimeCode);
 
 			if (v0 == null)
 			{

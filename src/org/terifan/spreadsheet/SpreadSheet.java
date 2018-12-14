@@ -9,18 +9,20 @@ import org.terifan.spreadsheet.ui.TableFactory;
 
 public class SpreadSheet
 {
-	private Map mMap;
 	private ArrayList<SpreadSheetTableColumn> mColumns;
+	private HashMap<Integer,String> mRowHeaders;
+	private Map<CellValue> mValues;
+	private Map<CellStyle> mStyles;
 	private int mRowHeaderSize;
 	private int mRowNumberSize;
 	private int mStaticColumnCount;
 	private String mRowHeaderTitle;
-	private HashMap<Integer,String> mRowHeaders;
 
 
 	public SpreadSheet()
 	{
-		mMap = new Map();
+		mValues = new Map();
+		mStyles = new Map();
 		mColumns = new ArrayList<>();
 		mRowHeaders = new HashMap<>();
 
@@ -32,19 +34,33 @@ public class SpreadSheet
 
 	public CellValue get(int aCol, int aRow)
 	{
-		return mMap.get(aCol, aRow);
+		return mValues.get(aCol, aRow);
 	}
 
 
-	public CellValue get(Tuple aTuple)
+	public <T extends CellValue> T get(int aCol, int aRow, Class<T> aCellValue, T aDefaultValue)
 	{
-		return mMap.get(aTuple);
+		T v = (T)mValues.get(aCol, aRow);
+		return v == null ? aDefaultValue : v;
 	}
 
 
 	public void set(int aCol, int aRow, Object aValue)
 	{
-		mMap.put(aCol, aRow, convertValue(aValue));
+		mValues.put(aCol, aRow, convertValue(aValue));
+	}
+
+
+	public CellStyle getStyle(int aCol, int aRow)
+	{
+		return mStyles.get(aCol, aRow);
+	}
+
+
+	public void setStyle(int aCol, int aRow, CellStyle aValue)
+	{
+		mStyles.put(aCol, aRow, aValue);
+		System.out.println(mStyles);
 	}
 
 
@@ -52,11 +68,11 @@ public class SpreadSheet
 	{
 		CellValue value = convertValue(aValue);
 
-		int maxRow = mMap.getMaxRow();
+		int maxRow = mValues.getMaxRow();
 
 		for (int row = 0; row <= maxRow; row++)
 		{
-			if (value.equals(mMap.get(aCol, row)))
+			if (value.equals(mValues.get(aCol, row)))
 			{
 				return row;
 			}
@@ -96,25 +112,25 @@ public class SpreadSheet
 
 	public int getRowCount()
 	{
-		return mMap.getRowCount();
+		return mValues.getRowCount();
 	}
 
 
 	public int lastRow()
 	{
-		return mMap.getMaxRow();
+		return mValues.getMaxRow();
 	}
 
 
 	public int getColumnCount()
 	{
-		return mMap.getColumnCount();
+		return mValues.getColumnCount();
 	}
 
 
 	public int lastColumn()
 	{
-		return mMap.getMaxColumn();
+		return mValues.getMaxColumn();
 	}
 
 
@@ -171,7 +187,7 @@ public class SpreadSheet
 			}
 		}
 
-		return new TableFactory().createTable(data, mColumns, mStaticColumnCount, mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mRowHeaders);
+		return new TableFactory().createTable(data, mColumns, mStaticColumnCount, mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mRowHeaders, mStyles);
 	}
 
 
@@ -216,15 +232,15 @@ public class SpreadSheet
 	}
 
 
-	public Number getComputedNumber(Tuple aTuple, long aTimeCode)
+	public NumberValue getComputedNumber(Tuple aTuple, long aTimeCode)
 	{
-		return (Number)getComputed(aTuple, aTimeCode);
+		return (NumberValue)getComputed(aTuple, aTimeCode);
 	}
 
 
 	public CellValue getComputed(Tuple aTuple, long aTimeCode)
 	{
-		CellValue v = get(aTuple);
+		CellValue v = mValues.get(aTuple);
 
 		if (v instanceof Formula)
 		{
@@ -247,15 +263,15 @@ public class SpreadSheet
 		}
 		if (aValue instanceof Double || aValue instanceof Float)
 		{
-			return new Number(((java.lang.Number)aValue).doubleValue());
+			return new NumberValue(((java.lang.Number)aValue).doubleValue());
 		}
 		if (aValue instanceof Integer || aValue instanceof Long || aValue instanceof Short || aValue instanceof Byte)
 		{
-			return new Number(((java.lang.Number)aValue).longValue());
+			return new NumberValue(((java.lang.Number)aValue).longValue());
 		}
 		if (aValue instanceof String)
 		{
-			return new Text((String)aValue);
+			return new TextValue((String)aValue);
 		}
 		if (aValue instanceof Boolean)
 		{
@@ -277,7 +293,7 @@ public class SpreadSheet
 //		throw new IllegalArgumentException("Unsupported: " + aValue.getClass());
 		System.out.println("Unsupported cell value, displaying as text: " + aValue.getClass());
 
-		return new Text(aValue.toString());
+		return new TextValue(aValue.toString());
 	}
 
 

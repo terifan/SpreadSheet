@@ -2,6 +2,7 @@ package org.terifan.spreadsheet.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -69,6 +70,8 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		super.setGridColor(new Color(0xB1B5BA));
 		super.addColumn(column);
 		super.setPreferredScrollableViewportSize(getPreferredSize());
+		super.setShowGrid(false);
+		super.setIntercellSpacing(new Dimension(0,0));
 	}
 
 

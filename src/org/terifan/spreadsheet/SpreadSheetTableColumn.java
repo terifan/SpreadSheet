@@ -11,6 +11,7 @@ public class SpreadSheetTableColumn extends TableColumn
 	public SpreadSheetTableColumn(int aModelIndex)
 	{
 		super(aModelIndex);
+		setHeaderValue(Character.toString((char)('A' + aModelIndex)));
 	}
 
 

@@ -1,11 +1,13 @@
 package org.terifan.spreadsheet.demo;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.io.File;
 import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+import org.terifan.spreadsheet.CellStyle;
 import org.terifan.spreadsheet.Range;
 import org.terifan.spreadsheet.SpreadSheet;
 import org.terifan.spreadsheet.SpreadSheetTableColumn;

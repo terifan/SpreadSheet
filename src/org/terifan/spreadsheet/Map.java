@@ -3,9 +3,9 @@ package org.terifan.spreadsheet;
 import java.util.ArrayList;
 
 
-public class Map
+public class Map<T>
 {
-	private ArrayList<MapRow> mMap;
+	private ArrayList<MapRow<T>> mMap;
 
 
 	public Map()
@@ -14,9 +14,13 @@ public class Map
 	}
 
 
-	public CellValue get(int aCol, int aRow)
+	public T get(int aCol, int aRow)
 	{
-		MapRow row = mMap.get(aRow);
+		if (aRow >= mMap.size())
+		{
+			return null;
+		}
+		MapRow<T> row = mMap.get(aRow);
 		if (row == null)
 		{
 			return null;
@@ -25,13 +29,13 @@ public class Map
 	}
 
 
-	public CellValue get(Tuple aTuple)
+	public T get(Tuple aTuple)
 	{
 		return get(aTuple.mCol, aTuple.mRow);
 	}
 
 
-	public void put(int aCol, int aRow, CellValue aCellValue)
+	public void put(int aCol, int aRow, T aValue)
 	{
 		MapRow row = aRow >= mMap.size() ? null : mMap.get(aRow);
 		if (row == null)
@@ -48,7 +52,7 @@ public class Map
 			row.add(null);
 		}
 
-		row.set(aCol, aCellValue);
+		row.set(aCol, aValue);
 		row.trimToSize();
 
 		if (row.isEmpty())
@@ -103,5 +107,12 @@ public class Map
 			}
 		}
 		return count - 1;
+	}
+
+
+	@Override
+	public String toString()
+	{
+		return mMap.toString();
 	}
 }

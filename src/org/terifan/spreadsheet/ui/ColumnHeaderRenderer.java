@@ -3,9 +3,6 @@ package org.terifan.spreadsheet.ui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Shape;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -43,7 +40,7 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 
 
 	@Override
-	public Component getTableCellRendererComponent(JTable aTable, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+	public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aSelected, boolean aFocused, int aRow, int aColumn)
 	{
 		if (aTable != null)
 		{
@@ -57,7 +54,7 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 			}
 		}
 
-		if (aTable.isColumnSelected(column))
+		if (aTable.isColumnSelected(aColumn))
 		{
 			setBackground(new Color(0xFFDC61));
 		}
@@ -66,7 +63,7 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 			setBackground(new Color(0xF0F0F0));
 		}
 
-		setText((value == null) ? "" : value.toString());
+		setText((aValue == null) ? "" : aValue.toString());
 
 		return this;
 	}

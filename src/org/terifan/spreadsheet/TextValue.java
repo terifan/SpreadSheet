@@ -1,17 +1,17 @@
 package org.terifan.spreadsheet;
 
 
-public class Text implements CellValue
+public class TextValue implements CellValue
 {
 	private String mText;
 
 
-	public Text()
+	public TextValue()
 	{
 	}
 
 
-	public Text(String aValue)
+	public TextValue(String aValue)
 	{
 		mText = aValue;
 	}
@@ -33,9 +33,9 @@ public class Text implements CellValue
 	@Override
 	public boolean equals(Object aOther)
 	{
-		if (aOther instanceof Text)
+		if (aOther instanceof TextValue)
 		{
-			return ((Text)aOther).mText.equals(mText);
+			return ((TextValue)aOther).mText.equals(mText);
 		}
 
 		return false;
@@ -43,11 +43,11 @@ public class Text implements CellValue
 
 
 	@Override
-	public Text clone()
+	public TextValue clone()
 	{
 		try
 		{
-			return (Text)super.clone();
+			return (TextValue)super.clone();
 		}
 		catch (CloneNotSupportedException e)
 		{

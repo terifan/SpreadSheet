@@ -3,7 +3,7 @@ package org.terifan.spreadsheet.functions;
 import java.util.concurrent.atomic.AtomicReference;
 import org.terifan.spreadsheet.CellValue;
 import org.terifan.spreadsheet.Formula;
-import org.terifan.spreadsheet.Number;
+import org.terifan.spreadsheet.NumberValue;
 import org.terifan.spreadsheet.Range;
 import org.terifan.spreadsheet.SpreadSheet;
 
@@ -12,7 +12,7 @@ import org.terifan.spreadsheet.SpreadSheet;
 public class Sum implements Formula
 {
 	private Range mRange;
-	private Number mValue;
+	private NumberValue mValue;
 	private long mTimeCode;
 
 
@@ -33,14 +33,14 @@ public class Sum implements Formula
 			}
 			mTimeCode = Long.MIN_VALUE;
 
-			AtomicReference<Number> value = new AtomicReference<>(new Number());
+			AtomicReference<NumberValue> value = new AtomicReference<>(new NumberValue());
 
 			mRange.forEach(t->{
 				CellValue v = aSpreadSheet.getComputed(t, aTimeCode);
 
-				if (v instanceof Number)
+				if (v instanceof NumberValue)
 				{
-					value.set(value.get().add((Number)v));
+					value.set(value.get().add((NumberValue)v));
 				}
 			});
 

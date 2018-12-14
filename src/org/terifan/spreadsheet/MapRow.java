@@ -3,7 +3,7 @@ package org.terifan.spreadsheet;
 import java.util.ArrayList;
 
 
-public class MapRow extends ArrayList<CellValue>
+public class MapRow<T> extends ArrayList<T>
 {
 	@Override
 	public void trimToSize()
