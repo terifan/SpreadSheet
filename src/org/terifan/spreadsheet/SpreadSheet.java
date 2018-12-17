@@ -60,7 +60,6 @@ public class SpreadSheet
 	public void setStyle(int aCol, int aRow, CellStyle aValue)
 	{
 		mStyles.put(aCol, aRow, aValue);
-		System.out.println(mStyles);
 	}
 
 

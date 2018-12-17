@@ -15,4 +15,27 @@ public class MapRow<T> extends ArrayList<T>
 
 		super.trimToSize();
 	}
+
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (T item : this)
+		{
+			if (!first)
+			{
+				sb.append(",");
+			}
+			first = false;
+
+			if (item != null)
+			{
+				sb.append(item);
+			}
+		}
+
+		return "[" + sb.toString() + "]";
+	}
 }

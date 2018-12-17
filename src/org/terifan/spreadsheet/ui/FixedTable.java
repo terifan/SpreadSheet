@@ -1,6 +1,7 @@
 package org.terifan.spreadsheet.ui;
 
 import java.awt.Point;
+import java.util.Date;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import org.terifan.spreadsheet.Map;
@@ -13,6 +14,7 @@ public class FixedTable extends JTable
 	private Map<Boolean> mMap = new Map<>();
 	private Map<Boolean> mTempMap;
 	private Point mFirstExtendCell;
+	private Boolean mNewState;
 
 
 	public FixedTable(TableModel tableModel)
@@ -26,9 +28,24 @@ public class FixedTable extends JTable
 	{
 //		System.out.println(aRow+" "+aCol+" "+aToggle+" "+aExtend);
 
+		Map<Boolean> old = new Map<>();
+		old.addAll(mMap);
+
+		if (aToggle && !aExtend)
+		{
+			mFirstExtendCell = new Point(aRow, aCol);
+			mNewState = !isCellSelected(aRow, aCol);
+			mTempMap = new Map<>();
+			mTempMap.addAll(mMap);
+		}
+		if (!aToggle && !aExtend)
+		{
+			mNewState = true;
+		}
+
 		if (aToggle && !aExtend && isCellSelected(aRow, aCol))
 		{
-			mMap.remove(aCol, aRow);
+			mMap.put(aCol, aRow, false);
 		}
 		else
 		{
@@ -55,10 +72,9 @@ public class FixedTable extends JTable
 				mTempMap = null;
 			}
 
-			mMap.put(aCol, aRow, true);
-
 			if (!aExtend)
 			{
+				mMap.put(aCol, aRow, mNewState);
 				mFirstExtendCell = new Point(aRow, aCol);
 			}
 			else
@@ -67,7 +83,7 @@ public class FixedTable extends JTable
 				{
 					for (int col = Math.min(mFirstExtendCell.y, aCol); col <= Math.max(mFirstExtendCell.y, aCol); col++)
 					{
-						mMap.put(col, row, true);
+						mMap.put(col, row, mNewState);
 					}
 				}
 			}
@@ -75,7 +91,10 @@ public class FixedTable extends JTable
 
 		super.changeSelection(aRow, aCol, aToggle, aExtend);
 
-		repaint();
+		if (!old.equals(mMap))
+		{
+			repaint();
+		}
 	}
 
 

@@ -128,13 +128,6 @@ public class Map<T>
 	}
 
 
-	@Override
-	public String toString()
-	{
-		return mMap.toString();
-	}
-
-
 	public void clear()
 	{
 		mMap.clear();
@@ -181,5 +174,40 @@ public class Map<T>
 				}
 			}
 		}
+	}
+
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+
+		for (ArrayList<T> item : mMap)
+		{
+			if (!first)
+			{
+				sb.append(",");
+			}
+			first = false;
+
+			if (item != null)
+			{
+				sb.append(item);
+			}
+		}
+
+		return "[" + sb.toString() + "]";
+	}
+
+
+	@Override
+	public boolean equals(Object aOther)
+	{
+		if (aOther instanceof Map)
+		{
+			return mMap.equals(((Map)aOther).mMap);
+		}
+		return false;
 	}
 }
