@@ -123,7 +123,7 @@ public class TableFactory
 		tableHeader.setReorderingAllowed(false);
 		tableHeader.setDefaultRenderer(new ColumnHeaderRenderer("", aRowNumberSize, 0));
 
-		RowNumberTable rowTable = new RowNumberTable(table, staticData, staticColumns, aNumStaticColumns, aRowNumberSize, aRowHeaderSize, aRowHeaders);
+		RowNumberTable rowTable = new RowNumberTable(table, staticData, staticColumns, aNumStaticColumns, aRowNumberSize, aRowHeaderSize, aRowHeaders, aStyles);
 		rowTable.setDrawLeftBorder(true);
 
 		ColumnHeaderRenderer cornerLeft = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);

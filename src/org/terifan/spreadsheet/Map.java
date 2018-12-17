@@ -142,7 +142,7 @@ public class Map<T>
 
 	public MapRow<T> get(int aRow)
 	{
-		return mMap.get(aRow);
+		return aRow < 0 || aRow >= mMap.size() ? null : mMap.get(aRow);
 	}
 
 

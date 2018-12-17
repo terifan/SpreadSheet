@@ -1,10 +1,10 @@
 package org.terifan.spreadsheet.ui;
 
 import java.awt.Point;
-import java.util.Date;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import org.terifan.spreadsheet.Map;
+import org.terifan.spreadsheet.MapRow;
 
 
 public class FixedTable extends JTable
@@ -20,6 +20,24 @@ public class FixedTable extends JTable
 	public FixedTable(TableModel tableModel)
 	{
 		super(tableModel);
+	}
+
+
+	@Override
+	public boolean isRowSelected(int aRow)
+	{
+		MapRow<Boolean> row = mMap.get(aRow);
+		if (row != null)
+		{
+			for (Boolean b : row)
+			{
+				if (Boolean.TRUE.equals(b))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 

@@ -38,4 +38,31 @@ public class MapRow<T> extends ArrayList<T>
 
 		return "[" + sb.toString() + "]";
 	}
+
+
+	@Override
+	public boolean equals(Object aOther)
+	{
+		if (aOther instanceof MapRow)
+		{
+			MapRow<T> otherRow = (MapRow<T>)aOther;
+
+			if (otherRow.size() != size())
+			{
+				return false;
+			}
+
+			for (int i = 0; i < size(); i++)
+			{
+				T item = get(i);
+				T otherItem = otherRow.get(i);
+
+				if (item != otherItem && (item == null && otherItem != null || item != null && otherItem == null || !item.equals(otherItem)))
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 }
