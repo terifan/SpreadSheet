@@ -16,7 +16,7 @@ public class Map<T>
 
 	public T get(int aCol, int aRow)
 	{
-		if (aRow >= mMap.size())
+		if (aRow < 0 || aRow >= mMap.size())
 		{
 			return null;
 		}
@@ -25,7 +25,7 @@ public class Map<T>
 		{
 			return null;
 		}
-		return aCol >= row.size() ? null : row.get(aCol);
+		return aCol < 0 || aCol >= row.size() ? null : row.get(aCol);
 	}
 
 
@@ -58,6 +58,24 @@ public class Map<T>
 		if (row.isEmpty())
 		{
 			mMap.set(aRow, null);
+		}
+	}
+
+
+	public void remove(int aCol, int aRow)
+	{
+		if (mMap.size() >= aRow)
+		{
+			MapRow<T> row = mMap.get(aRow);
+			if (row != null && row.size() >= aCol)
+			{
+				row.remove(aCol);
+
+				if (row.isEmpty())
+				{
+					mMap.set(aRow, null);
+				}
+			}
 		}
 	}
 
@@ -114,5 +132,54 @@ public class Map<T>
 	public String toString()
 	{
 		return mMap.toString();
+	}
+
+
+	public void clear()
+	{
+		mMap.clear();
+	}
+
+
+	public void remove(int aRow)
+	{
+		mMap.remove(aRow);
+	}
+
+
+	public MapRow<T> get(int aRow)
+	{
+		return mMap.get(aRow);
+	}
+
+
+	public boolean contains(int aCol, int aRow)
+	{
+		if (mMap.size() <= aRow)
+		{
+			return false;
+		}
+		MapRow<T> row = mMap.get(aRow);
+		if (row != null && row.size() > aCol)
+		{
+			return row.get(aCol) != null;
+		}
+		return false;
+	}
+
+
+	public void addAll(Map<T> aOtherMap)
+	{
+		for (int rowIndex = 0; rowIndex < aOtherMap.mMap.size(); rowIndex++)
+		{
+			MapRow<T> otherRow = aOtherMap.get(rowIndex);
+			if (otherRow != null)
+			{
+				for (int colIndex = 0; colIndex < otherRow.size(); colIndex++)
+				{
+					put(colIndex, rowIndex, otherRow.get(colIndex));
+				}
+			}
+		}
 	}
 }

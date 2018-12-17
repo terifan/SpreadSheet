@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Shape;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -59,11 +58,12 @@ public class TableFactory
 
 		DefaultTableModel model = new DefaultTableModel(data, aColumns.stream().map(e->e.getHeaderValue()).collect(Collectors.toList()).toArray());
 
-		JTable table = new JTable(model);
+		FixedTable table = new FixedTable(model);
 		table.setBorder(null);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setColumnSelectionAllowed(false);
 		table.setRowSelectionAllowed(true);
+		table.setCellSelectionEnabled(true);
 		table.setGridColor(new Color(0xDADCDD));
 		table.setRowHeight(19);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
