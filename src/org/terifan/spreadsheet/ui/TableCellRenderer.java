@@ -233,6 +233,16 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 				aGraphics.drawLine(getWidth() - 2, getHeight() - 1, getWidth() - 2, getHeight() - 1);
 			}
 		}
+		if (mTable.isCellSelected(mRow, mColumnX))
+		{
+			if (!mTable.isCellSelected(mRow + 1, mColumnX + 1))
+			{
+				aGraphics.setColor(Color.BLACK);
+				aGraphics.drawLine(getWidth() - 2, getHeight() - 2, getWidth() - 2, getHeight() - 2);
+				aGraphics.setColor(Color.DARK_GRAY);
+				aGraphics.drawLine(getWidth() - 1, getHeight() - 1, getWidth() - 1, getHeight() - 1);
+			}
+		}
 		if (mTable.isCellSelected(mRow + 1, mColumnX - 1))
 		{
 			if (!mTable.isCellSelected(mRow, mColumnX))

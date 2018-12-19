@@ -42,6 +42,21 @@ public class FixedTable extends JTable
 
 
 	@Override
+	public boolean isColumnSelected(int aColumn)
+	{
+		for (int i = 0; i <= mMap.getMaxRow(); i++)
+		{
+			MapRow<Boolean> row = mMap.get(i);
+			if (row != null && row.size() > aColumn && Boolean.TRUE.equals(row.get(aColumn)))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Override
 	public void changeSelection(int aRow, int aCol, boolean aToggle, boolean aExtend)
 	{
 //		System.out.println(aRow+" "+aCol+" "+aToggle+" "+aExtend);
