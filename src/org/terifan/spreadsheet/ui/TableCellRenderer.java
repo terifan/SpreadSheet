@@ -13,19 +13,34 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 {
 	private static final long serialVersionUID = 1L;
 
+	private final boolean mRowHeader;
+	private final FixedTable mMainTable;
 	private final FixedTable mTable;
 	private final Map<CellStyle> mStyles;
-	private final int mNumStaticColumns;
-	private int mRow;
-	private int mColumn;
-	private int mColumnX;
+	private int mNumStaticColumns;
+	protected int mRow;
+	protected int mColumn;
+	protected int mColumnX;
+	protected boolean mDrawLeftBorder;
 
 
 	public TableCellRenderer(FixedTable aTable, int aNumStaticColumns, Map<CellStyle> aStyles)
 	{
-		mNumStaticColumns = aNumStaticColumns;
+//		mNumStaticColumns = aNumStaticColumns;
 		mStyles = aStyles;
 		mTable = aTable;
+		mRowHeader = false;
+		mMainTable = null;
+	}
+
+
+	public TableCellRenderer(FixedTable aTable, FixedTable aMainTable, int aNumStaticColumns, Map<CellStyle> aStyles)
+	{
+		mMainTable = aMainTable;
+//		mNumStaticColumns = aNumStaticColumns;
+		mStyles = aStyles;
+		mTable = aTable;
+		mRowHeader = true;
 	}
 
 
@@ -56,6 +71,7 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 	@Override
 	protected void paintBorder(Graphics aGraphics)
 	{
+		Color colorLeft = null;
 		Color colorRight = null;
 		Color colorBottom = null;
 		Color colorRightBottom = null;
@@ -108,6 +124,27 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 			}
 		}
 
+		if (mRowHeader)
+		{
+			if (mMainTable.isRowSelected(mRow))
+			{
+				colorBottom = new Color(0xC28A30);
+				colorRight = new Color(0xC28A30);
+				colorRightBottom = new Color(0xC28A30);
+				colorLeft = new Color(0xC28A30);
+			}
+			else if (mMainTable.isRowSelected(mRow + 1))
+			{
+				colorBottom = new Color(0xC28A30);
+				colorRightBottom = new Color(0xC28A30);
+			}
+
+			if (mDrawLeftBorder && colorLeft == null)
+			{
+				colorLeft = new Color(0xB1B5BA);
+			}
+		}
+
 		aGraphics.setColor(colorRight == null ? new Color(0xDADCDD) : colorRight);
 		aGraphics.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 2);
 
@@ -116,6 +153,12 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 
 		aGraphics.setColor(colorRightBottom == null ? new Color(0xDADCDD) : colorRightBottom);
 		aGraphics.drawLine(getWidth() - 1, getHeight() - 1, getWidth() - 1, getHeight() - 1);
+
+		if (colorLeft != null)
+		{
+			aGraphics.setColor(colorLeft);
+			aGraphics.drawLine(0, 0, 0, getHeight() - 1);
+		}
 
 		if (mTable.isCellSelected(mRow, mColumnX))
 		{

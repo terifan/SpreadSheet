@@ -162,4 +162,10 @@ public class FixedTable extends JTable
 	{
 		return Boolean.TRUE.equals(mMap.get(aCol, aRow));
 	}
+
+
+	public Map<Boolean> getSelections()
+	{
+		return mMap;
+	}
 }

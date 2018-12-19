@@ -32,7 +32,6 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	private static final long serialVersionUID = 1L;
 
 	private JTable mTable;
-	private boolean mDrawLeftBorder;
 	private SpreadSheetTableColumn[] mStaticColumns;
 	private CellValue[][] mStaticData;
 	private int mNumStaticColumns;
@@ -63,13 +62,13 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 
 		TableColumn column = new TableColumn();
 		column.setHeaderValue(" ");
-		column.setCellRenderer(new RowNumberRenderer(aTable, aStyles));
+		column.setCellRenderer(new RowNumberRenderer(aTable, aTable, aStyles, true));
 		column.setPreferredWidth(width);
 
 		super.setFocusable(false);
 		super.setAutoCreateColumnsFromModel(false);
 		super.setSelectionModel(mTable.getSelectionModel());
-		super.setGridColor(new Color(0xB1B5BA));
+		super.setGridColor(new Color(0xff0000));
 		super.addColumn(column);
 		super.setPreferredScrollableViewportSize(getPreferredSize());
 		super.setShowGrid(false);
@@ -188,24 +187,18 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	}
 
 
-	public void setDrawLeftBorder(boolean aState)
-	{
-		mDrawLeftBorder = aState;
-	}
-
-
 	private class RowNumberRenderer extends TableCellRenderer
-//	private class RowNumberRenderer extends DefaultTableCellRenderer
 	{
 		private static final long serialVersionUID = 1L;
-		private int mRow;
 
 
-		public RowNumberRenderer(FixedTable aTable, Map<CellStyle> aStyles)
+		public RowNumberRenderer(FixedTable aTable, FixedTable aMainTable, Map<CellStyle> aStyles, boolean aDrawLeftBorder)
 		{
-			super(aTable, 0, aStyles);
+			super(aTable, aMainTable, 0, aStyles);
 
 			setHorizontalAlignment(JLabel.CENTER);
+
+			mDrawLeftBorder = aDrawLeftBorder;
 		}
 
 
@@ -213,6 +206,8 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aSelected, boolean aFocused, int aRow, int aColumn)
 		{
 			mRow = aRow;
+			mColumnX = aColumn - 1;
+			mColumn = aColumn;
 
 			if (aTable != null)
 			{
@@ -239,7 +234,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 
 			if (mDrawLeftBorder)
 			{
-				setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(0xB1B5BA)));
+				setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(aSelected ? 0xC28A30 : 0xB1B5BA)));
 			}
 			else
 			{
@@ -276,7 +271,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 
 					aGraphics.setColor(rowSelected ? new Color(0xFFDC61) : new Color(0xF0F0F0));
 					aGraphics.fillRect(x, 0, w, h);
-					aGraphics.setColor(new Color(0xB1B5BA));
+					aGraphics.setColor(rowSelected ? new Color(0xC28A30) : new Color(0xB1B5BA));
 					aGraphics.drawLine(x, 0, x, h);
 
 					aGraphics.setColor(Color.BLACK);

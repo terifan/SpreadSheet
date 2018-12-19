@@ -83,13 +83,33 @@ public class TableFactory
 			columnModel.addColumn(col);
 		}
 
+		JTableHeader tableHeader = table.getTableHeader();
+		tableHeader.setReorderingAllowed(false);
+		tableHeader.setDefaultRenderer(new ColumnHeaderRenderer("", aRowNumberSize, 0, table));
+
+		RowNumberTable rowTable = new RowNumberTable(table, staticData, staticColumns, aNumStaticColumns, aRowNumberSize, aRowHeaderSize, aRowHeaders, aStyles);
+
+		ColumnHeaderRenderer cornerLeft = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize, table);
+		cornerLeft.setDrawLeftBorder(true);
+		cornerLeft.setStaticColumns(staticColumns, aNumStaticColumns);
+
+//		ColumnHeaderRenderer cornerRight = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
+
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setRowHeaderView(rowTable);
+		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerLeft);
+//		scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, cornerRight);
+		scrollPane.setBorder(null);
+
 		selectionModel.addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
 			public void valueChanged(ListSelectionEvent aEvent)
 			{
-				table.getTableHeader().repaint();
-				table.repaint();
+//				tableHeader.repaint();
+//				table.repaint();
+//				rowTable.repaint();
+				scrollPane.repaint();
 			}
 		});
 
@@ -114,29 +134,12 @@ public class TableFactory
 			@Override
 			public void columnSelectionChanged(ListSelectionEvent aE)
 			{
-				table.getTableHeader().repaint();
-				table.repaint();
+//				tableHeader.repaint();
+//				table.repaint();
+//				rowTable.repaint();
+				scrollPane.repaint();
 			}
 		});
-
-		JTableHeader tableHeader = table.getTableHeader();
-		tableHeader.setReorderingAllowed(false);
-		tableHeader.setDefaultRenderer(new ColumnHeaderRenderer("", aRowNumberSize, 0));
-
-		RowNumberTable rowTable = new RowNumberTable(table, staticData, staticColumns, aNumStaticColumns, aRowNumberSize, aRowHeaderSize, aRowHeaders, aStyles);
-		rowTable.setDrawLeftBorder(true);
-
-		ColumnHeaderRenderer cornerLeft = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
-		cornerLeft.setDrawLeftBorder(true);
-		cornerLeft.setStaticColumns(staticColumns, aNumStaticColumns);
-
-//		ColumnHeaderRenderer cornerRight = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
-
-		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setRowHeaderView(rowTable);
-		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerLeft);
-//		scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, cornerRight);
-		scrollPane.setBorder(null);
 
 		return scrollPane;
 	}

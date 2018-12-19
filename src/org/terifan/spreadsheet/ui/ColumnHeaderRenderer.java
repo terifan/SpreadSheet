@@ -2,10 +2,13 @@ package org.terifan.spreadsheet.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.border.AbstractBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import org.terifan.spreadsheet.SpreadSheetTableColumn;
@@ -22,13 +25,15 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	private String mRowHeaderTitle;
 	private int mRowHeaderSize;
 	private int mRowNumberSize;
+	private JTable mTable;
 
 
-	public ColumnHeaderRenderer(String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize)
+	public ColumnHeaderRenderer(String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, JTable aTable)
 	{
 		mRowHeaderTitle = aRowHeaderTitle;
 		mRowNumberSize = aRowNumberSize;
 		mRowHeaderSize = aRowHeaderSize;
+		mTable = aTable;
 
 		setHorizontalAlignment(JLabel.CENTER);
 		setOpaque(true);
@@ -57,10 +62,37 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 		if (aTable.isColumnSelected(aColumn))
 		{
 			setBackground(new Color(0xFFDC61));
+			setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, new Color(0xC28A30)));
+		}
+		else if (aTable.isColumnSelected(aColumn + 1))
+		{
+			setBorder(new AbstractBorder()
+			{
+				@Override
+				public Insets getBorderInsets(Component aC, Insets aInsets)
+				{
+					aInsets.bottom = 1;
+					aInsets.left = 0;
+					aInsets.right = 1;
+					aInsets.top = 1;
+					return aInsets;
+				}
+
+				@Override
+				public void paintBorder(Component aC, Graphics aGraphics, int aX, int aY, int aWidth, int aHeight)
+				{
+					aGraphics.setColor(new Color(0xB1B5BA));
+					aGraphics.drawLine(aX, aY, aX + aWidth - 2, aY);
+					aGraphics.drawLine(aX, aY + aHeight - 1, aX + aWidth - 2, aY + aHeight - 1);
+					aGraphics.setColor(new Color(0xC28A30));
+					aGraphics.drawLine(aX + aWidth - 1, aY, aX + aWidth - 1, aY + aHeight - 1);
+				}
+			});
 		}
 		else
 		{
 			setBackground(new Color(0xF0F0F0));
+			setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, new Color(0xB1B5BA)));
 		}
 
 		setText((aValue == null) ? "" : aValue.toString());
@@ -114,6 +146,15 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	}
 
 
+	@Override
+	public Dimension getPreferredSize()
+	{
+		Dimension d = super.getPreferredSize();
+		d.height = 20;
+		return d;
+	}
+
+
 	public void setDrawLeftBorder(boolean aState)
 	{
 		mLeftBorder = aState;
@@ -130,7 +171,38 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 
 	private void update()
 	{
-		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(mTopBorder ? 1 : 0, mLeftBorder ? 1 : 0, 1, 1, new Color(0xB1B5BA)), BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+		setBorder(new AbstractBorder()
+		{
+			@Override
+			public Insets getBorderInsets(Component aC, Insets aInsets)
+			{
+				aInsets.bottom = 1;
+				aInsets.left = 0;
+				aInsets.right = 1;
+				aInsets.top = 1;
+				return aInsets;
+			}
+
+			@Override
+			public void paintBorder(Component aC, Graphics aGraphics, int aX, int aY, int aWidth, int aHeight)
+			{
+				aGraphics.setColor(new Color(0xB1B5BA));
+				aGraphics.drawLine(aX, aY, aX, aY + aHeight);
+				aGraphics.drawLine(aX, aY, aX + aWidth - 2, aY);
+				aGraphics.drawLine(aX, aY + aHeight - 1, aX + aWidth - 2, aY + aHeight - 1);
+				if (mTable.isColumnSelected(0))
+				{
+					aGraphics.setColor(new Color(0xC28A30));
+				}
+				aGraphics.drawLine(aX + aWidth - 1, aY, aX + aWidth - 1, aY + aHeight - 1);
+			}
+		});
+	}
+
+
+	public JTable getTable()
+	{
+		return mTable;
 	}
 
 
