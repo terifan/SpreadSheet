@@ -44,26 +44,23 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	@Override
 	public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aSelected, boolean aFocused, int aRow, int aColumn)
 	{
-		if (aTable != null)
-		{
-			JTableHeader header = aTable.getTableHeader();
+		JTableHeader header = aTable.getTableHeader();
 
-			if (header != null)
-			{
-				setForeground(header.getForeground());
-				setBackground(header.getBackground());
-				setFont(header.getFont());
-			}
+		if (header != null)
+		{
+			super.setForeground(header.getForeground());
+			super.setBackground(header.getBackground());
+			super.setFont(header.getFont());
 		}
 
 		if (aTable.isColumnSelected(aColumn))
 		{
-			setBackground(new Color(0xFFDC61));
-			setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, new Color(0xC28A30)));
+			super.setBackground(new Color(0xFFDC61));
+			super.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, new Color(0xC28A30)));
 		}
 		else if (aTable.isColumnSelected(aColumn + 1))
 		{
-			setBorder(new AbstractBorder()
+			super.setBorder(new AbstractBorder()
 			{
 				@Override
 				public Insets getBorderInsets(Component aC, Insets aInsets)
@@ -89,11 +86,11 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 		}
 		else
 		{
-			setBackground(new Color(0xF0F0F0));
-			setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, new Color(0xB1B5BA)));
+			super.setBackground(new Color(0xF0F0F0));
+			super.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, new Color(0xB1B5BA)));
 		}
 
-		setText((aValue == null) ? "" : aValue.toString());
+		super.setText((aValue == null) ? "" : aValue.toString());
 
 		return this;
 	}

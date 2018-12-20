@@ -192,7 +192,6 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aSelected, boolean aFocused, int aRow, int aColumn)
 		{
 			mRow = aRow;
-			mColumnX = aColumn - 1;
 			mColumn = aColumn;
 
 			if (aTable != null)

@@ -2,7 +2,6 @@ package org.terifan.spreadsheet.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +42,8 @@ public class TableFactory
 		table.setShowGrid(false);
 		table.setIntercellSpacing(new Dimension(0, 0));
 		table.setDefaultRenderer(Object.class, new TableCellRenderer(table, aStyles));
+		table.setSelectionForeground(null);
+		table.setSelectionBackground(null);
 
 		ListSelectionModel selectionModel = table.getSelectionModel();
 

@@ -19,14 +19,13 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 	private final Map<CellStyle> mStyles;
 	protected int mRow;
 	protected int mColumn;
-	protected int mColumnX;
 	protected boolean mDrawLeftBorder;
 
 
 	public TableCellRenderer(FixedTable aTable, Map<CellStyle> aStyles)
 	{
-		mStyles = aStyles;
 		mTable = aTable;
+		mStyles = aStyles;
 		mRowHeader = false;
 		mMainTable = null;
 	}
@@ -44,20 +43,30 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 	@Override
 	public Component getTableCellRendererComponent(JTable aTable, Object aValue, boolean aSelected, boolean aFocused, int aRow, int aColumn)
 	{
-		CellStyle DEFAULT = new CellStyle().setForegroundColor(mTable.getForeground()).setBackgroundColor(mTable.getBackground()).setFont(mTable.getFont());
+		CellStyle DEFAULT = new CellStyle().setFont(mTable.getFont());
 
 		mRow = aRow;
-		mColumnX = aColumn;
 		mColumn = aColumn;
 
 		Component comp = super.getTableCellRendererComponent(aTable, aValue, aSelected, aFocused, aRow, aColumn);
 
-//		if (!aIsSelected)
+		if (aSelected)
 		{
-			CellStyle style = mStyles.get(aColumn, aRow);
-
-			(style == null ? DEFAULT : style).apply(comp);
+			comp.setForeground(mTable.getSelectionForeground());
+			comp.setBackground(mTable.getSelectionBackground());
 		}
+		else
+		{
+			comp.setForeground(mTable.getForeground());
+			comp.setBackground(mTable.getBackground());
+		}
+
+		CellStyle style = mStyles.get(aColumn, aRow);
+		if (style == null)
+		{
+			style = DEFAULT;
+		}
+		style.apply(comp);
 
 		return comp;
 	}
@@ -66,6 +75,8 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 	@Override
 	protected void paintBorder(Graphics aGraphics)
 	{
+		int col = mRowHeader ? mColumn - 1 : mColumn;
+
 		Color colorLeft = null;
 		Color colorRight = null;
 		Color colorBottom = null;
@@ -155,46 +166,46 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 			aGraphics.drawLine(0, 0, 0, getHeight() - 1);
 		}
 
-		if (mTable.isCellSelected(mRow, mColumnX))
+		if (mTable.isCellSelected(mRow, col))
 		{
 			aGraphics.setColor(Color.BLACK);
-			if (!mTable.isCellSelected(mRow, mColumnX + 1))
+			if (!mTable.isCellSelected(mRow, col + 1))
 			{
 				aGraphics.drawLine(getWidth() - 2, 0, getWidth() - 2, getHeight() - 2);
 			}
-			if (!mTable.isCellSelected(mRow + 1, mColumnX))
+			if (!mTable.isCellSelected(mRow + 1, col))
 			{
 				aGraphics.drawLine(0, getHeight() - 2, getWidth() - 2, getHeight() - 2);
 			}
-			if (!mTable.isCellSelected(mRow - 1, mColumnX))
+			if (!mTable.isCellSelected(mRow - 1, col))
 			{
 				aGraphics.drawLine(0, 0, getWidth() - 1, 0);
 			}
-			if (!mTable.isCellSelected(mRow, mColumnX - 1))
+			if (!mTable.isCellSelected(mRow, col - 1))
 			{
 				aGraphics.drawLine(0, 0, 0, getHeight() - 1);
 			}
-			if (mTable.isCellSelected(mRow, mColumnX + 1) && !mTable.isCellSelected(mRow + 1, mColumnX + 1))
+			if (mTable.isCellSelected(mRow, col + 1) && !mTable.isCellSelected(mRow + 1, col + 1))
 			{
 				aGraphics.drawLine(getWidth() - 1, getHeight() - 2, getWidth() - 1, getHeight() - 2);
 			}
-			if (mTable.isCellSelected(mRow + 1, mColumnX) && !mTable.isCellSelected(mRow + 1, mColumnX + 1))
+			if (mTable.isCellSelected(mRow + 1, col) && !mTable.isCellSelected(mRow + 1, col + 1))
 			{
 				aGraphics.drawLine(getWidth() - 2, getHeight() - 1, getWidth() - 2, getHeight() - 1);
 			}
 			aGraphics.setColor(Color.DARK_GRAY);
-			if (!mTable.isCellSelected(mRow, mColumnX + 1))
+			if (!mTable.isCellSelected(mRow, col + 1))
 			{
 				aGraphics.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
 			}
-			if (!mTable.isCellSelected(mRow + 1, mColumnX))
+			if (!mTable.isCellSelected(mRow + 1, col))
 			{
 				aGraphics.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
 			}
 		}
-		if (mTable.isCellSelected(mRow, mColumnX + 1))
+		if (mTable.isCellSelected(mRow, col + 1))
 		{
-			if (!mTable.isCellSelected(mRow, mColumnX))
+			if (!mTable.isCellSelected(mRow, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(getWidth() - 2, 0, getWidth() - 2, getHeight() - 1);
@@ -202,9 +213,9 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 				aGraphics.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
 			}
 		}
-		if (mTable.isCellSelected(mRow + 1, mColumnX))
+		if (mTable.isCellSelected(mRow + 1, col))
 		{
-			if (!mTable.isCellSelected(mRow, mColumnX))
+			if (!mTable.isCellSelected(mRow, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(0, getHeight() - 2, getWidth() - 1, getHeight() - 2);
@@ -212,9 +223,9 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 				aGraphics.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
 			}
 		}
-		if (mTable.isCellSelected(mRow + 1, mColumnX + 1))
+		if (mTable.isCellSelected(mRow + 1, col + 1))
 		{
-			if (!mTable.isCellSelected(mRow, mColumnX))
+			if (!mTable.isCellSelected(mRow, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(getWidth() - 2, getHeight() - 2, getWidth() - 2, getHeight() - 2);
@@ -222,15 +233,15 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 				aGraphics.setColor(Color.DARK_GRAY);
 				aGraphics.drawLine(getWidth() - 1, getHeight() - 1, getWidth() - 1, getHeight() - 1);
 			}
-			if (!mTable.isCellSelected(mRow, mColumnX) && !mTable.isCellSelected(mRow, mColumnX - 1))
+			if (!mTable.isCellSelected(mRow, col) && !mTable.isCellSelected(mRow, col - 1))
 			{
 				aGraphics.setColor(Color.DARK_GRAY);
 				aGraphics.drawLine(getWidth() - 2, getHeight() - 1, getWidth() - 2, getHeight() - 1);
 			}
 		}
-		if (mTable.isCellSelected(mRow, mColumnX))
+		if (mTable.isCellSelected(mRow, col))
 		{
-			if (!mTable.isCellSelected(mRow + 1, mColumnX + 1))
+			if (!mTable.isCellSelected(mRow + 1, col + 1))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(getWidth() - 2, getHeight() - 2, getWidth() - 2, getHeight() - 2);
@@ -238,51 +249,51 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 				aGraphics.drawLine(getWidth() - 1, getHeight() - 1, getWidth() - 1, getHeight() - 1);
 			}
 		}
-		if (mTable.isCellSelected(mRow + 1, mColumnX - 1))
+		if (mTable.isCellSelected(mRow + 1, col - 1))
 		{
-			if (!mTable.isCellSelected(mRow, mColumnX))
+			if (!mTable.isCellSelected(mRow, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(0, getHeight() - 2, 0, getHeight() - 2);
 			}
-			if (!mTable.isCellSelected(mRow, mColumnX) && !mTable.isCellSelected(mRow + 1, mColumnX))
+			if (!mTable.isCellSelected(mRow, col) && !mTable.isCellSelected(mRow + 1, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(0, getHeight() - 1, 0, getHeight() - 1);
 			}
 		}
-		if (mTable.isCellSelected(mRow, mColumnX - 1))
+		if (mTable.isCellSelected(mRow, col - 1))
 		{
-			if (!mTable.isCellSelected(mRow, mColumnX))
+			if (!mTable.isCellSelected(mRow, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(0, 0, 0, getHeight() - 1);
 			}
 		}
-		if (mTable.isCellSelected(mRow - 1, mColumnX + 1))
+		if (mTable.isCellSelected(mRow - 1, col + 1))
 		{
-			if (!mTable.isCellSelected(mRow, mColumnX))
+			if (!mTable.isCellSelected(mRow, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(getWidth() - 2, 0, getWidth() - 2, 0);
 			}
-			if (!mTable.isCellSelected(mRow, mColumnX) && !mTable.isCellSelected(mRow, mColumnX + 1))
+			if (!mTable.isCellSelected(mRow, col) && !mTable.isCellSelected(mRow, col + 1))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(getWidth() - 1, 0, getWidth() - 1, 0);
 			}
 		}
-		if (mTable.isCellSelected(mRow - 1, mColumnX))
+		if (mTable.isCellSelected(mRow - 1, col))
 		{
-			if (!mTable.isCellSelected(mRow, mColumnX))
+			if (!mTable.isCellSelected(mRow, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(0, 0, getWidth() - 1, 0);
 			}
 		}
-		if (mTable.isCellSelected(mRow - 1, mColumnX - 1))
+		if (mTable.isCellSelected(mRow - 1, col - 1))
 		{
-			if (!mTable.isCellSelected(mRow, mColumnX))
+			if (!mTable.isCellSelected(mRow, col))
 			{
 				aGraphics.setColor(Color.BLACK);
 				aGraphics.drawLine(0, 0, 0, 0);
