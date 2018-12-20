@@ -27,14 +27,9 @@ public class TableFactory
 {
 	public JScrollPane createTable(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns, String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders, Map<CellStyle> aStyles)
 	{
-		if (aRowHeaders.isEmpty())
-		{
-			aRowHeaderSize = 0;
-		}
-
 		addMissingColumns(aData, aColumns);
 
-		DefaultTableModel model = new DefaultTableModel(aData, aColumns.stream().map(e->e.getHeaderValue()).collect(Collectors.toList()).toArray());
+		DefaultTableModel model = new DefaultTableModel(aData, aColumns.stream().map(e -> e.getHeaderValue()).collect(Collectors.toList()).toArray());
 
 		FixedTable table = new FixedTable(model);
 		table.setBorder(null);
@@ -46,7 +41,7 @@ public class TableFactory
 		table.setRowHeight(19);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setShowGrid(false);
-		table.setIntercellSpacing(new Dimension(0,0));
+		table.setIntercellSpacing(new Dimension(0, 0));
 		table.setDefaultRenderer(Object.class, new TableCellRenderer(table, aStyles));
 
 		ListSelectionModel selectionModel = table.getSelectionModel();
@@ -63,12 +58,9 @@ public class TableFactory
 		ColumnHeaderRenderer cornerLeft = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize, table);
 		cornerLeft.setDrawLeftBorder(true);
 
-//		ColumnHeaderRenderer cornerRight = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
-
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setRowHeaderView(rowTable);
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerLeft);
-//		scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, cornerRight);
 		scrollPane.setBorder(null);
 
 		selectionModel.addListSelectionListener(new ListSelectionListener()
@@ -86,18 +78,26 @@ public class TableFactory
 			public void columnAdded(TableColumnModelEvent aE)
 			{
 			}
+
+
 			@Override
 			public void columnRemoved(TableColumnModelEvent aE)
 			{
 			}
+
+
 			@Override
 			public void columnMoved(TableColumnModelEvent aE)
 			{
 			}
+
+
 			@Override
 			public void columnMarginChanged(ChangeEvent aE)
 			{
 			}
+
+
 			@Override
 			public void columnSelectionChanged(ListSelectionEvent aE)
 			{

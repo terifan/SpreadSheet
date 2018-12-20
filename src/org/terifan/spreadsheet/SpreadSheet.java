@@ -10,7 +10,7 @@ import org.terifan.spreadsheet.ui.TableFactory;
 public class SpreadSheet
 {
 	private ArrayList<SpreadSheetTableColumn> mColumns;
-	private HashMap<Integer,String> mRowHeaders;
+	private HashMap<Integer, String> mRowHeaders;
 	private Map<CellValue> mValues;
 	private Map<CellStyle> mStyles;
 	private int mRowHeaderSize;
@@ -184,7 +184,7 @@ public class SpreadSheet
 			}
 		}
 
-		return new TableFactory().createTable(data, mColumns, mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mRowHeaders, mStyles);
+		return new TableFactory().createTable(data, mColumns, mRowHeaderTitle, mRowNumberSize, mRowHeaders.isEmpty() ? 0 : mRowHeaderSize, mRowHeaders, mStyles);
 	}
 
 
@@ -287,7 +287,6 @@ public class SpreadSheet
 			return new DateValue((Date)aValue);
 		}
 
-//		throw new IllegalArgumentException("Unsupported: " + aValue.getClass());
 		System.out.println("Unsupported cell value, displaying as text: " + aValue.getClass());
 
 		return new TextValue(aValue.toString());

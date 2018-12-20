@@ -11,7 +11,7 @@ public class FixedTable extends JTable
 {
 	private static final long serialVersionUID = 1L;
 
-	private Map<Boolean> mMap = new Map<>();
+	private Map<Boolean> mMap;
 	private Map<Boolean> mTempMap;
 	private Point mFirstExtendCell;
 	private Boolean mNewState;
@@ -20,6 +20,8 @@ public class FixedTable extends JTable
 	public FixedTable(TableModel tableModel)
 	{
 		super(tableModel);
+
+		mMap = new Map<>();
 	}
 
 
@@ -128,28 +130,6 @@ public class FixedTable extends JTable
 		{
 			repaint();
 		}
-	}
-
-
-	@Override
-	public void addRowSelectionInterval(int index0, int index1)
-	{
-//		for (int i = index0; i < index1; i++)
-//		{
-//			mMap.remove(i);
-//		}
-//		super.addRowSelectionInterval(index0, index1);
-	}
-
-
-	@Override
-	public void removeRowSelectionInterval(int index0, int index1)
-	{
-//		for (int i = index0; i < index1; i++)
-//		{
-//			mMap.remove(i);
-//		}
-//		super.removeRowSelectionInterval(index0, index1);
 	}
 
 

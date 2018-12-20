@@ -58,7 +58,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		super.addColumn(column);
 		super.setPreferredScrollableViewportSize(getPreferredSize());
 		super.setShowGrid(false);
-		super.setIntercellSpacing(new Dimension(0,0));
+		super.setIntercellSpacing(new Dimension(0, 0));
 	}
 
 

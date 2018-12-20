@@ -32,8 +32,8 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 		mRowHeaderSize = aRowHeaderSize;
 		mTable = aTable;
 
-		setHorizontalAlignment(JLabel.CENTER);
-		setOpaque(true);
+		super.setHorizontalAlignment(JLabel.CENTER);
+		super.setOpaque(true);
 
 		mTopBorder = true;
 
@@ -74,6 +74,7 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 					aInsets.top = 1;
 					return aInsets;
 				}
+
 
 				@Override
 				public void paintBorder(Component aC, Graphics aGraphics, int aX, int aY, int aWidth, int aHeight)
@@ -117,8 +118,6 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 
 				aGraphics.setColor(Color.BLACK);
 				TextPainter.drawString(mRowHeaderTitle, x + 2, 0, w - 4, getHeight(), true, aGraphics);
-
-				x += mRowHeaderSize;
 			}
 		}
 		else
@@ -161,16 +160,23 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 				aInsets.bottom = 1;
 				aInsets.left = 0;
 				aInsets.right = 1;
-				aInsets.top = 1;
+				aInsets.top = mTopBorder ? 1 : 0;
 				return aInsets;
 			}
+
 
 			@Override
 			public void paintBorder(Component aC, Graphics aGraphics, int aX, int aY, int aWidth, int aHeight)
 			{
 				aGraphics.setColor(new Color(0xB1B5BA));
-				aGraphics.drawLine(aX, aY, aX, aY + aHeight);
-				aGraphics.drawLine(aX, aY, aX + aWidth - 2, aY);
+				if (mLeftBorder)
+				{
+					aGraphics.drawLine(aX, aY, aX, aY + aHeight);
+				}
+				if (mTopBorder)
+				{
+					aGraphics.drawLine(aX, aY, aX + aWidth - 2, aY);
+				}
 				aGraphics.drawLine(aX, aY + aHeight - 1, aX + aWidth - 2, aY + aHeight - 1);
 				if (mTable.isColumnSelected(0))
 				{
@@ -179,11 +185,5 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 				aGraphics.drawLine(aX + aWidth - 1, aY, aX + aWidth - 1, aY + aHeight - 1);
 			}
 		});
-	}
-
-
-	public JTable getTable()
-	{
-		return mTable;
 	}
 }
