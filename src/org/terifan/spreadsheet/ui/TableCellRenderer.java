@@ -17,16 +17,14 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 	private final FixedTable mMainTable;
 	private final FixedTable mTable;
 	private final Map<CellStyle> mStyles;
-	private int mNumStaticColumns;
 	protected int mRow;
 	protected int mColumn;
 	protected int mColumnX;
 	protected boolean mDrawLeftBorder;
 
 
-	public TableCellRenderer(FixedTable aTable, int aNumStaticColumns, Map<CellStyle> aStyles)
+	public TableCellRenderer(FixedTable aTable, Map<CellStyle> aStyles)
 	{
-//		mNumStaticColumns = aNumStaticColumns;
 		mStyles = aStyles;
 		mTable = aTable;
 		mRowHeader = false;
@@ -34,10 +32,9 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 	}
 
 
-	public TableCellRenderer(FixedTable aTable, FixedTable aMainTable, int aNumStaticColumns, Map<CellStyle> aStyles)
+	public TableCellRenderer(FixedTable aTable, FixedTable aMainTable, Map<CellStyle> aStyles)
 	{
 		mMainTable = aMainTable;
-//		mNumStaticColumns = aNumStaticColumns;
 		mStyles = aStyles;
 		mTable = aTable;
 		mRowHeader = true;
@@ -51,11 +48,9 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 
 		mRow = aRow;
 		mColumnX = aColumn;
-		mColumn = mNumStaticColumns + aColumn;
+		mColumn = aColumn;
 
 		Component comp = super.getTableCellRendererComponent(aTable, aValue, aSelected, aFocused, aRow, aColumn);
-
-		aColumn += mNumStaticColumns;
 
 //		if (!aIsSelected)
 		{

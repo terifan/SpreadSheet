@@ -25,7 +25,7 @@ import org.terifan.spreadsheet.SpreadSheetTableColumn;
 
 public class TableFactory
 {
-	public JScrollPane createTable(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns, int aNumStaticColumns, String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders, Map<CellStyle> aStyles)
+	public JScrollPane createTable(CellValue[][] aData, List<SpreadSheetTableColumn> aColumns, String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders, Map<CellStyle> aStyles)
 	{
 		if (aRowHeaders.isEmpty())
 		{
@@ -34,26 +34,7 @@ public class TableFactory
 
 		addMissingColumns(aData, aColumns);
 
-		SpreadSheetTableColumn[] dataColumns = new SpreadSheetTableColumn[aColumns.size() - aNumStaticColumns];
-		SpreadSheetTableColumn[] staticColumns = new SpreadSheetTableColumn[aNumStaticColumns];
-
-		for (int i = 0; i < aNumStaticColumns; i++)
-		{
-			staticColumns[i] = aColumns.get(i);
-		}
-		for (int i = aNumStaticColumns, j = 0; i < aColumns.size(); i++, j++)
-		{
-			dataColumns[j] = i >= aColumns.size() ? new SpreadSheetTableColumn(i) : aColumns.get(i);
-		}
-
-		CellValue[][] staticData = aData;
-		CellValue[][] data = new CellValue[aData.length][dataColumns.length];
-		for (int i = 0; i < data.length; i++)
-		{
-			data[i] = Arrays.copyOfRange(aData[i], aNumStaticColumns, aData[i].length);
-		}
-
-		DefaultTableModel model = new DefaultTableModel(data, aColumns.stream().map(e->e.getHeaderValue()).collect(Collectors.toList()).toArray());
+		DefaultTableModel model = new DefaultTableModel(aData, aColumns.stream().map(e->e.getHeaderValue()).collect(Collectors.toList()).toArray());
 
 		FixedTable table = new FixedTable(model);
 		table.setBorder(null);
@@ -66,32 +47,21 @@ public class TableFactory
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setShowGrid(false);
 		table.setIntercellSpacing(new Dimension(0,0));
-		table.setDefaultRenderer(Object.class, new TableCellRenderer(table, aNumStaticColumns, aStyles));
+		table.setDefaultRenderer(Object.class, new TableCellRenderer(table, aStyles));
 
 		ListSelectionModel selectionModel = table.getSelectionModel();
 
 		TableColumnModel columnModel = table.getColumnModel();
 		columnModel.setColumnSelectionAllowed(true);
-		while (columnModel.getColumnCount() > 0)
-		{
-			columnModel.removeColumn(columnModel.getColumn(0));
-		}
-		for (int i = 0; i < aColumns.size() - aNumStaticColumns; i++)
-		{
-			SpreadSheetTableColumn col = aColumns.get(aNumStaticColumns + i);
-			col.setModelIndex(i);
-			columnModel.addColumn(col);
-		}
 
 		JTableHeader tableHeader = table.getTableHeader();
 		tableHeader.setReorderingAllowed(false);
 		tableHeader.setDefaultRenderer(new ColumnHeaderRenderer("", aRowNumberSize, 0, table));
 
-		RowNumberTable rowTable = new RowNumberTable(table, staticData, staticColumns, aNumStaticColumns, aRowNumberSize, aRowHeaderSize, aRowHeaders, aStyles);
+		RowNumberTable rowTable = new RowNumberTable(table, aRowNumberSize, aRowHeaderSize, aRowHeaders, aStyles);
 
 		ColumnHeaderRenderer cornerLeft = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize, table);
 		cornerLeft.setDrawLeftBorder(true);
-		cornerLeft.setStaticColumns(staticColumns, aNumStaticColumns);
 
 //		ColumnHeaderRenderer cornerRight = new ColumnHeaderRenderer(aRowHeaderTitle, aRowNumberSize, aRowHeaderSize);
 
@@ -106,9 +76,6 @@ public class TableFactory
 			@Override
 			public void valueChanged(ListSelectionEvent aEvent)
 			{
-//				tableHeader.repaint();
-//				table.repaint();
-//				rowTable.repaint();
 				scrollPane.repaint();
 			}
 		});
@@ -134,9 +101,6 @@ public class TableFactory
 			@Override
 			public void columnSelectionChanged(ListSelectionEvent aE)
 			{
-//				tableHeader.repaint();
-//				table.repaint();
-//				rowTable.repaint();
 				scrollPane.repaint();
 			}
 		});

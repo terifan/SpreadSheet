@@ -15,7 +15,6 @@ public class SpreadSheet
 	private Map<CellStyle> mStyles;
 	private int mRowHeaderSize;
 	private int mRowNumberSize;
-	private int mStaticColumnCount;
 	private String mRowHeaderTitle;
 
 
@@ -28,7 +27,6 @@ public class SpreadSheet
 
 		mRowNumberSize = 50;
 		mRowHeaderSize = 75;
-		mStaticColumnCount = 0;
 	}
 
 
@@ -186,7 +184,7 @@ public class SpreadSheet
 			}
 		}
 
-		return new TableFactory().createTable(data, mColumns, mStaticColumnCount, mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mRowHeaders, mStyles);
+		return new TableFactory().createTable(data, mColumns, mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mRowHeaders, mStyles);
 	}
 
 
@@ -360,19 +358,6 @@ public class SpreadSheet
 	public SpreadSheet setRowHeaderTitle(String aRowHeaderTitle)
 	{
 		mRowHeaderTitle = aRowHeaderTitle;
-		return this;
-	}
-
-
-	public int getStaticColumnCount()
-	{
-		return mStaticColumnCount;
-	}
-
-
-	public SpreadSheet setStaticColumnCount(int aStaticColumnCount)
-	{
-		mStaticColumnCount = aStaticColumnCount;
 		return this;
 	}
 

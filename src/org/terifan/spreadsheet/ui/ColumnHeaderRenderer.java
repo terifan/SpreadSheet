@@ -11,7 +11,6 @@ import javax.swing.JTable;
 import javax.swing.border.AbstractBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import org.terifan.spreadsheet.SpreadSheetTableColumn;
 
 
 public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
@@ -20,8 +19,6 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 
 	private boolean mLeftBorder;
 	private boolean mTopBorder;
-	private SpreadSheetTableColumn[] mStaticColumns;
-	private int mNumStaticColumns;
 	private String mRowHeaderTitle;
 	private int mRowHeaderSize;
 	private int mRowNumberSize;
@@ -104,7 +101,7 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	@Override
 	protected void paintComponent(Graphics aGraphics)
 	{
-		if (mNumStaticColumns > 0 || mRowHeaderSize > 0)
+		if (mRowHeaderSize > 0)
 		{
 			int x = mRowNumberSize;
 			int h = getHeight();
@@ -122,21 +119,6 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 				TextPainter.drawString(mRowHeaderTitle, x + 2, 0, w - 4, getHeight(), true, aGraphics);
 
 				x += mRowHeaderSize;
-			}
-
-			for (int i = 0; i < mNumStaticColumns; i++)
-			{
-				int w = mStaticColumns[i].getPreferredWidth();
-
-				String text = "" + mStaticColumns[i].getHeaderValue();
-
-				aGraphics.setColor(new Color(0xB1B5BA));
-				aGraphics.drawLine(x, 0, x, h);
-
-				aGraphics.setColor(Color.BLACK);
-				TextPainter.drawString(text, x + 2, 0, w - 4, getHeight(), true, aGraphics);
-
-				x += w;
 			}
 		}
 		else
@@ -203,12 +185,5 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 	public JTable getTable()
 	{
 		return mTable;
-	}
-
-
-	void setStaticColumns(SpreadSheetTableColumn[] aStaticColumns, int aNumStaticColumns)
-	{
-		mStaticColumns = aStaticColumns;
-		mNumStaticColumns = aNumStaticColumns;
 	}
 }
