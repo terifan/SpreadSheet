@@ -69,6 +69,8 @@ public class Test
 			ss.setStyle(6, 6, CellStyle.NEUTRAL);
 			ss.setStyle(6, 7, CellStyle.NEUTRAL);
 
+			ss.setStyle(0, 7, CellStyle.NEUTRAL);
+
 //			ss.print();
 
 			WorkBook workBook = new WorkBook();

@@ -246,23 +246,17 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 				aGraphics.setColor(Color.BLACK);
 				TextPainter.drawString(getText(), 0, 0, mRowNumberSize, getHeight(), true, aGraphics);
 
-				int x = mRowNumberSize;
-
 				if (mRowHeaderSize > 0)
 				{
 					String text = mRowHeaders.getOrDefault(mRow, "");
 
-					int w = mRowHeaderSize;
-
 					aGraphics.setColor(rowSelected ? new Color(0xFFDC61) : new Color(0xF0F0F0));
-					aGraphics.fillRect(x, 0, w, h);
-					aGraphics.setColor(rowSelected ? new Color(0xC28A30) : new Color(0xB1B5BA));
-					aGraphics.drawLine(x, 0, x, h);
+					aGraphics.fillRect(mRowNumberSize, 0, mRowHeaderSize, h);
+					aGraphics.setColor(new Color(0xB1B5BA));
+					aGraphics.drawLine(mRowNumberSize, 0, mRowNumberSize, h);
 
 					aGraphics.setColor(Color.BLACK);
-					TextPainter.drawString(text, x + 2, 0, w - 4, getHeight(), false, aGraphics);
-
-					x += w;
+					TextPainter.drawString(text, mRowNumberSize + 2, 0, mRowHeaderSize - 4, getHeight(), false, aGraphics);
 				}
 			}
 			else

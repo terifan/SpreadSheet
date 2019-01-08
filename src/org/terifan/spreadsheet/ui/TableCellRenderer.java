@@ -82,51 +82,54 @@ public class TableCellRenderer extends DefaultTableCellRenderer
 		Color colorBottom = null;
 		Color colorRightBottom = null;
 
-		CellStyle style = mStyles.get(mColumn, mRow);
-		if (style != null && style.getBackgroundColor() != null)
+		if (!mRowHeader)
 		{
-			colorRight = style.getBackgroundColor();
-			colorBottom = style.getBackgroundColor();
-			colorRightBottom = style.getBackgroundColor();
-		}
-		if (colorBottom == null)
-		{
-			style = mStyles.get(mColumn, mRow + 1);
-			if (style != null && style.getBackgroundColor() != null)
-			{
-				colorBottom = style.getBackgroundColor();
-			}
-		}
-		if (colorRight == null)
-		{
-			style = mStyles.get(mColumn + 1, mRow);
+			CellStyle style = mStyles.get(mColumn, mRow);
 			if (style != null && style.getBackgroundColor() != null)
 			{
 				colorRight = style.getBackgroundColor();
-			}
-		}
-		if (colorRightBottom == null)
-		{
-			style = mStyles.get(mColumn + 1, mRow);
-			if (style != null && style.getBackgroundColor() != null)
-			{
+				colorBottom = style.getBackgroundColor();
 				colorRightBottom = style.getBackgroundColor();
 			}
-		}
-		if (colorRightBottom == null)
-		{
-			style = mStyles.get(mColumn, mRow + 1);
-			if (style != null && style.getBackgroundColor() != null)
+			if (colorBottom == null)
 			{
-				colorRightBottom = style.getBackgroundColor();
+				style = mStyles.get(mColumn, mRow + 1);
+				if (style != null && style.getBackgroundColor() != null)
+				{
+					colorBottom = style.getBackgroundColor();
+				}
 			}
-		}
-		if (colorRightBottom == null)
-		{
-			style = mStyles.get(mColumn + 1, mRow + 1);
-			if (style != null && style.getBackgroundColor() != null)
+			if (colorRight == null)
 			{
-				colorRightBottom = style.getBackgroundColor();
+				style = mStyles.get(mColumn + 1, mRow);
+				if (style != null && style.getBackgroundColor() != null)
+				{
+					colorRight = style.getBackgroundColor();
+				}
+			}
+			if (colorRightBottom == null)
+			{
+				style = mStyles.get(mColumn + 1, mRow);
+				if (style != null && style.getBackgroundColor() != null)
+				{
+					colorRightBottom = style.getBackgroundColor();
+				}
+			}
+			if (colorRightBottom == null)
+			{
+				style = mStyles.get(mColumn, mRow + 1);
+				if (style != null && style.getBackgroundColor() != null)
+				{
+					colorRightBottom = style.getBackgroundColor();
+				}
+			}
+			if (colorRightBottom == null)
+			{
+				style = mStyles.get(mColumn + 1, mRow + 1);
+				if (style != null && style.getBackgroundColor() != null)
+				{
+					colorRightBottom = style.getBackgroundColor();
+				}
 			}
 		}
 

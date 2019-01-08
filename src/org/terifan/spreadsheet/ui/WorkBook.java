@@ -25,7 +25,7 @@ public class WorkBook extends JTabbedPane
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 2));
 		scrollPane.setViewportBorder(null);
 
-		super.addTab("File", icon, scrollPane);
+		super.addTab(aTitle, icon, scrollPane);
 
 		return this;
 	}
