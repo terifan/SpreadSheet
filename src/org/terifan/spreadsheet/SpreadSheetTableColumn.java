@@ -28,4 +28,10 @@ public class SpreadSheetTableColumn extends TableColumn
 		setHeaderValue(aHeaderValue);
 		setPreferredWidth(aPreferredWidth);
 	}
+
+
+	Class<?> getColumnClass()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }

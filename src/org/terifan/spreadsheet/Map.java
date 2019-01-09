@@ -82,12 +82,6 @@ public class Map<T>
 
 	public int getRowCount()
 	{
-		return mMap.size();
-	}
-
-
-	public int getMaxRow()
-	{
 		int rows = mMap.size();
 		while (--rows > 0)
 		{
@@ -111,20 +105,6 @@ public class Map<T>
 			}
 		}
 		return count;
-	}
-
-
-	public int getMaxColumn()
-	{
-		int count = 0;
-		for (MapRow row : mMap)
-		{
-			if (row != null)
-			{
-				count = Math.max(count, row.size());
-			}
-		}
-		return count - 1;
 	}
 
 
