@@ -71,7 +71,7 @@ public class Test
 
 			ss.setStyle(0, 7, CellStyle.NEUTRAL);
 
-//			ss.print();
+			ss.print();
 
 			WorkBook workBook = new WorkBook();
 			workBook.addTab("Sheet1", ss);
