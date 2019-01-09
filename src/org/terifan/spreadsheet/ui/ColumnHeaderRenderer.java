@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import javax.swing.border.AbstractBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+import jdk.internal.joptsimple.internal.Strings;
 
 
 public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
@@ -114,7 +115,7 @@ public class ColumnHeaderRenderer extends JLabel implements TableCellRenderer
 				int w = mRowHeaderSize;
 
 				aGraphics.setColor(Color.BLACK);
-				TextPainter.drawString(mRowHeaderTitle, x + 2, 0, w - 4, getHeight(), true, aGraphics);
+				TextPainter.drawString(mRowHeaderTitle == null ? "" : mRowHeaderTitle, x + 2, 0, w - 4, getHeight(), true, aGraphics);
 			}
 		}
 		else

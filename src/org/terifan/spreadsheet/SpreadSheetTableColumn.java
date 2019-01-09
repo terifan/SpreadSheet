@@ -6,6 +6,7 @@ import javax.swing.table.TableColumn;
 public class SpreadSheetTableColumn extends TableColumn
 {
 	private static final long serialVersionUID = 1L;
+	private Class<?> mClass = String.class;
 
 
 	public SpreadSheetTableColumn(int aModelIndex)
@@ -30,8 +31,14 @@ public class SpreadSheetTableColumn extends TableColumn
 	}
 
 
-	Class<?> getColumnClass()
+	public Class<?> getColumnClass()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return mClass;
+	}
+
+
+	public void setColumnClass(Class<?> aClass)
+	{
+		mClass = aClass;
 	}
 }

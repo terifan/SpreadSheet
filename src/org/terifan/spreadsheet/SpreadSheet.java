@@ -444,10 +444,7 @@ public class SpreadSheet implements TableModel
 		}
 		mColumns.set(aColumn.getModelIndex(), aColumn);
 
-		for (TableModelListener listener : mListeners)
-		{
-			listener.tableChanged(new TableModelEvent(this));
-		}
+		fireListeners(new TableModelEvent(this));
 	}
 
 
@@ -461,7 +458,7 @@ public class SpreadSheet implements TableModel
 	@Override
 	public int getColumnCount()
 	{
-		return mValues.getColumnCount();
+		return 20;//mValues.getColumnCount();
 	}
 
 
@@ -498,10 +495,7 @@ public class SpreadSheet implements TableModel
 	{
 		mValues.put(aColumnIndex, aRowIndex, (CellValue)aValue);
 
-		for (TableModelListener listener : mListeners)
-		{
-			listener.tableChanged(new TableModelEvent(this, aRowIndex, aRowIndex, aColumnIndex));
-		}
+		fireListeners(new TableModelEvent(this, aRowIndex, aRowIndex, aColumnIndex));
 	}
 
 
@@ -516,5 +510,14 @@ public class SpreadSheet implements TableModel
 	public void removeTableModelListener(TableModelListener aListener)
 	{
 		mListeners.remove(aListener);
+	}
+
+
+	private void fireListeners(TableModelEvent aEvent)
+	{
+		for (TableModelListener listener : mListeners)
+		{
+			listener.tableChanged(aEvent);
+		}
 	}
 }
