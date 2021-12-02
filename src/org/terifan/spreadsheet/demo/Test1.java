@@ -31,12 +31,12 @@ public class Test1
 
 			for (File file : new File("c:\\").listFiles())
 			{
-				ss.set(0, ss.nextRow(), file.getName());
-				ss.set(1, ss.lastRow(), new Date(file.lastModified()));
-				ss.set(2, ss.lastRow(), file.length());
+				ss.set(0, ss.getRowCount(), file.getName());
+				ss.set(1, ss.getRowCount()-1, new Date(file.lastModified()));
+				ss.set(2, ss.getRowCount()-1, file.length());
 			}
 
-			ss.set(2, ss.nextRow(), new Sum(new Range(new Tuple(2, 0), new Tuple(2, ss.lastRow()))));
+			ss.set(2, ss.getRowCount(), new Sum(new Range(new Tuple(2, 0), new Tuple(2, ss.getRowCount()))));
 
 			ss.print();
 
