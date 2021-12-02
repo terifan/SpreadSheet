@@ -1,11 +1,13 @@
 package org.terifan.spreadsheet;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
-public class Map<T>
+public class Map<T> implements Iterable<MapRow<T>>
 {
 	private ArrayList<MapRow<T>> mMap;
+	private int mColumnCount;
 
 
 	public Map()
@@ -14,29 +16,41 @@ public class Map<T>
 	}
 
 
-	public T get(int aCol, int aRow)
+	public T get(int aRow, int aCol)
 	{
-		if (aRow < 0 || aRow >= mMap.size())
+		if (aRow < 0 || aRow >= mMap.size() || aCol < 0 || aCol >= mColumnCount)
 		{
+//			System.out.println("*");
 			return null;
 		}
 		MapRow<T> row = mMap.get(aRow);
 		if (row == null)
 		{
+//			System.out.println("&");
 			return null;
 		}
-		return aCol < 0 || aCol >= row.size() ? null : row.get(aCol);
+		if (aCol < 0 || aCol >= row.size())
+		{
+//			System.out.println("%");
+			return null;
+		}
+		return row.get(aCol);
 	}
 
 
 	public T get(Tuple aTuple)
 	{
-		return get(aTuple.mCol, aTuple.mRow);
+		return get(aTuple.getRow(), aTuple.getCol());
 	}
 
 
-	public void put(int aCol, int aRow, T aValue)
+	public void put(int aRow, int aColumn, T aValue)
 	{
+		if (aColumn < 0 || aRow < 0)
+		{
+			throw new IllegalArgumentException();
+		}
+
 		MapRow row = aRow >= mMap.size() ? null : mMap.get(aRow);
 		if (row == null)
 		{
@@ -47,13 +61,14 @@ public class Map<T>
 			}
 			mMap.set(aRow, row);
 		}
-		while (row.size() <= aCol)
+		while (row.size() <= aColumn)
 		{
 			row.add(null);
 		}
 
-		row.set(aCol, aValue);
-		row.trimToSize();
+		row.set(aColumn, aValue);
+
+		mColumnCount = Math.max(mColumnCount, aColumn + 1);
 
 		if (row.isEmpty())
 		{
@@ -62,7 +77,7 @@ public class Map<T>
 	}
 
 
-	public void remove(int aCol, int aRow)
+	public void remove(int aRow, int aCol)
 	{
 		if (mMap.size() >= aRow)
 		{
@@ -82,29 +97,13 @@ public class Map<T>
 
 	public int getRowCount()
 	{
-		int rows = mMap.size();
-		while (--rows > 0)
-		{
-			if (mMap.get(rows) != null)
-			{
-				break;
-			}
-		}
-		return rows;
+		return mMap.size();
 	}
 
 
 	public int getColumnCount()
 	{
-		int count = 0;
-		for (MapRow row : mMap)
-		{
-			if (row != null)
-			{
-				count = Math.max(count, row.size());
-			}
-		}
-		return count;
+		return mColumnCount;
 	}
 
 
@@ -126,7 +125,7 @@ public class Map<T>
 	}
 
 
-	public boolean contains(int aCol, int aRow)
+	public boolean contains(int aRow, int aCol)
 	{
 		if (mMap.size() <= aRow)
 		{
@@ -150,7 +149,7 @@ public class Map<T>
 			{
 				for (int colIndex = 0; colIndex < otherRow.size(); colIndex++)
 				{
-					put(colIndex, rowIndex, otherRow.get(colIndex));
+					put(rowIndex, colIndex, otherRow.get(colIndex));
 				}
 			}
 		}
@@ -163,7 +162,7 @@ public class Map<T>
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 
-		for (ArrayList<T> item : mMap)
+		for (MapRow<T> item : mMap)
 		{
 			if (!first)
 			{
@@ -190,4 +189,93 @@ public class Map<T>
 		}
 		return false;
 	}
+
+
+	@Override
+	public Iterator<MapRow<T>> iterator()
+	{
+		return mMap.iterator();
+	}
+
+
+	public int countColumns()
+	{
+		int count = 0;
+		for (MapRow row : mMap)
+		{
+			if (row != null)
+			{
+				count = Math.max(count, row.size());
+			}
+		}
+		mColumnCount = count;
+
+		return mColumnCount;
+	}
+
+
+	public void trim()
+	{
+		int rows = getRowCount();
+		int maxColumns = 0;
+		boolean found = false;
+
+		for (int y = rows; --y >= 0; )
+		{
+			MapRow<T> row = mMap.get(y);
+
+			if (row != null)
+			{
+				int cols = row.trim();
+
+				if (cols == 0)
+				{
+					if (!found)
+					{
+						mMap.remove(y);
+					}
+					else
+					{
+						mMap.set(y, null);
+					}
+				}
+				else
+				{
+					found = true;
+				}
+
+				maxColumns = Math.max(maxColumns, cols);
+			}
+			else if (!found)
+			{
+				mMap.remove(row);
+			}
+		}
+
+		mColumnCount = maxColumns;
+	}
+
+
+//	public static void main(String ... args)
+//	{
+//		try
+//		{
+//			Map<Boolean> map = new Map<>();
+//			map.put(10, 10, Boolean.FALSE);
+//			map.put(10, 20, Boolean.FALSE);
+//			System.out.println(map.getRowCount()+"/"+map.getColumnCount()+" "+map);
+//			map.remove(10, 20);
+//			System.out.println(map.getRowCount()+"/"+map.getColumnCount()+" "+map);
+//			map.trim();
+//			System.out.println(map.getRowCount()+"/"+map.getColumnCount()+" "+map);
+//			map.remove(10, 10);
+//			System.out.println(map.getRowCount()+"/"+map.getColumnCount()+" "+map);
+//			map.trim();
+//			System.out.println(map.getRowCount()+"/"+map.getColumnCount()+" "+map);
+//		}
+//		catch (Throwable e)
+//		{
+//			e.printStackTrace(System.out);
+//		}
+//	}
 }

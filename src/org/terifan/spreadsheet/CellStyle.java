@@ -14,6 +14,8 @@ public class CellStyle
 	public final static CellStyle BAD = new CellStyle().setBackgroundColor(new Color(0xFFC7CE)).setForegroundColor(new Color(0x9C0006));
 	public final static CellStyle GOOD = new CellStyle().setBackgroundColor(new Color(0xC6EFCE)).setForegroundColor(new Color(0x006100));
 	public final static CellStyle NEUTRAL = new CellStyle().setBackgroundColor(new Color(0xFFEB9C)).setForegroundColor(new Color(0x9C6500));
+	public final static CellStyle DEFAULT = new CellStyle().setBackgroundColor(null).setForegroundColor(new Color(0x000000));
+	public final static CellStyle LOCKED = new CellStyle().setBackgroundColor(new Color(0xDDDDDD)).setForegroundColor(new Color(0x000000));
 
 
 	public CellStyle()

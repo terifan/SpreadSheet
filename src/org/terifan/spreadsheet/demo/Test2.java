@@ -17,8 +17,11 @@ public class Test2
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 			SpreadSheet ss = new SpreadSheet();
-			ss.set(3, 3, 1);
-			ss.set(3, 4, 2);
+			ss.setValueAt(1, 3, 3);
+			ss.setValueAt(2, 4, 3);
+
+			System.out.println(ss.getRowCount());
+			System.out.println(ss.getColumnCount());
 
 			WorkBook workBook = new WorkBook();
 			workBook.addTab("Sheet1", ss);

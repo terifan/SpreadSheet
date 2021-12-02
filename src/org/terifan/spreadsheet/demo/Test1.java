@@ -1,18 +1,13 @@
 package org.terifan.spreadsheet.demo;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.io.File;
 import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-import org.terifan.spreadsheet.CellStyle;
-import org.terifan.spreadsheet.Range;
 import org.terifan.spreadsheet.SpreadSheet;
 import org.terifan.spreadsheet.SpreadSheetTableColumn;
-import org.terifan.spreadsheet.functions.Sum;
-import org.terifan.spreadsheet.Tuple;
 import org.terifan.spreadsheet.ui.WorkBook;
 
 
@@ -31,12 +26,12 @@ public class Test1
 
 			for (File file : new File("c:\\").listFiles())
 			{
-				ss.set(0, ss.getRowCount(), file.getName());
-				ss.set(1, ss.getRowCount()-1, new Date(file.lastModified()));
-				ss.set(2, ss.getRowCount()-1, file.length());
+				ss.setValueAt(file.getName(), ss.nextRow(), 0);
+				ss.setValueAt(new Date(file.lastModified()), ss.getRowCount(), 1);
+				ss.setValueAt(file.length(), ss.getRowCount(), 2);
 			}
 
-			ss.set(2, ss.getRowCount(), new Sum(new Range(new Tuple(2, 0), new Tuple(2, ss.getRowCount()))));
+//			ss.setValueAt(2, ss.nextRow(), new Sum(new Range(new Tuple(2, 0), new Tuple(2, ss.lastRow()))));
 
 			ss.print();
 

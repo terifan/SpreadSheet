@@ -1,152 +1,157 @@
 package org.terifan.spreadsheet;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import org.terifan.spreadsheet.ui.ColumnHeaderRenderer;
-import org.terifan.spreadsheet.ui.FixedTable;
-import org.terifan.spreadsheet.ui.RowNumberTable;
-import org.terifan.spreadsheet.ui.TableCellRenderer;
+import java.util.Iterator;
+import org.terifan.spreadsheet.ui.SpreadSheetTable;
+import org.terifan.spreadsheet.ui.TableFactory;
+import org.terifan.spreadsheet.ui.WorkBook;
 
 
-public class SpreadSheet implements TableModel
+public class SpreadSheet implements Iterable<Tuple>, DataProvider
 {
-	private Map<CellValue> mValues;
-	private Map<CellStyle> mStyles;
+	private ArrayList<SpreadSheetTableColumn> mColumns;
 	private HashMap<Integer, String> mRowHeaders;
+	private Map<Cell> mMap;
 	private int mRowHeaderSize;
 	private int mRowNumberSize;
 	private String mRowHeaderTitle;
-	private JScrollPane mScrollPane;
-	private FixedTable mTable;
-	private ArrayList<TableModelListener> mListeners;
-	private ArrayList<SpreadSheetTableColumn> mColumns;
+	private DataLookup mDataLookup;
+	private SpreadSheetFunctions mFunctions;
 
 
 	public SpreadSheet()
 	{
-		mListeners = new ArrayList<>();
+		mMap = new Map();
 		mColumns = new ArrayList<>();
-		mValues = new Map();
-		mStyles = new Map();
 		mRowHeaders = new HashMap<>();
 
 		mRowNumberSize = 50;
 		mRowHeaderSize = 75;
-
-//		long timeCode = System.nanoTime();
-//		int maxRow = nextRow();
-//		int maxColumn = 1 + lastColumn();
-//
-//		CellValue[][] data = new CellValue[maxRow][maxColumn];
-//		for (int row = 0; row < maxRow; row++)
-//		{
-//			for (int col = 0; col < maxColumn; col++)
-//			{
-//				data[row][col] = getComputed(col, row, timeCode);
-//			}
-//		}
-
-		createTable();
 	}
 
 
-	public CellValue get(int aCol, int aRow)
+	public SpreadSheet ensureCapacity(int aRows, int aColumns)
 	{
-		return mValues.get(aCol, aRow);
+		mMap.put(aRows, aColumns, new Cell(this));
+		return this;
 	}
 
 
-	public <T extends CellValue> T get(int aCol, int aRow, Class<T> aCellValue, T aDefaultValue)
+	public Cell getCell(Tuple aPos)
 	{
-		T v = (T)mValues.get(aCol, aRow);
-		return v == null ? aDefaultValue : v;
+		return getCell(aPos.getRow(), aPos.getCol());
 	}
 
 
-	public void set(int aCol, int aRow, Object aValue)
+	public Cell getCell(int aRow, int aCol)
 	{
-		mValues.put(aCol, aRow, convertValue(aValue));
+		return mMap.get(aRow, aCol);
 	}
 
 
-	public CellStyle getStyle(int aCol, int aRow)
+	public Cell createCell(Tuple aPos)
 	{
-		return mStyles.get(aCol, aRow);
+		return createCell(aPos.getRow(), aPos.getCol());
 	}
 
 
-	public void setStyle(int aCol, int aRow, CellStyle aValue)
+	public Cell createCell(int aRow, int aCol)
 	{
-		mStyles.put(aCol, aRow, aValue);
-	}
-
-
-	public int findRow(int aCol, Object aValue)
-	{
-		CellValue value = convertValue(aValue);
-
-		int maxRow = mValues.getRowCount();
-
-		for (int row = 0; row < maxRow; row++)
+		Cell cell = mMap.get(aRow, aCol);
+		if (cell == null)
 		{
-			if (value.equals(mValues.get(aCol, row)))
-			{
-				return row;
-			}
+			cell = new Cell(this);
+			mMap.put(aRow, aCol, cell);
 		}
-
-		return -1;
+		return cell;
 	}
 
 
-	public void removeEmptyRows()
+	public String getValueAt(Tuple aPos)
 	{
-		int maxCol = getColumnCount();
-		int maxRow = getRowCount();
-		for (int y = 0; y < maxRow; y++)
-		{
-			boolean empty = true;
-			for (int x = 0; x < maxCol; x++)
-			{
-				if (get(x, y) != null)
-				{
-					empty = false;
-					break;
-				}
-			}
-			if (empty)
-			{
-				for (int yi = y + 1; yi < maxRow; yi++)
-				{
+		return getValueAt(aPos.getRow(), aPos.getCol());
+	}
 
-				}
-				y--;
-				maxRow--;
-			}
+
+	public String getValueAt(int aRow, int aCol)
+	{
+		Cell cell = mMap.get(aRow, aCol);
+		if (cell == null)
+		{
+			return null;
 		}
+		return cell.getValue();
+	}
+
+
+	public SpreadSheet setValueAt(Object aValue, Tuple aPos)
+	{
+		setValueAt(aValue, aPos.getRow(), aPos.getCol());
+		return this;
+	}
+
+
+	public SpreadSheet setValueAt(Object aValue, int aRow, int aCol)
+	{
+		createCell(aRow, aCol).setValue(aValue == null ? null : aValue.toString());
+		return this;
+	}
+
+
+	public CellStyle getStyleAt(Tuple aPos)
+	{
+		return getStyleAt(aPos.getRow(), aPos.getCol());
+	}
+
+
+	public CellStyle getStyleAt(int aRow, int aCol)
+	{
+		Cell cell = getCell(aRow, aCol);
+		if (cell == null)
+		{
+			return null;
+		}
+		return cell.getStyle();
+	}
+
+
+	public SpreadSheet setStyleAt(Tuple aPos, CellStyle aStyle)
+	{
+		return setStyleAt(aPos.getRow(), aPos.getCol(), aStyle);
+	}
+
+
+	public SpreadSheet setStyleAt(int aRow, int aCol, CellStyle aStyle)
+	{
+		createCell(aRow, aCol).setStyle(aStyle);
+		return this;
+	}
+
+
+	public void trim()
+	{
+		mMap.trim();
+	}
+
+
+	public int getRowCount()
+	{
+		return mMap.getRowCount();
+	}
+
+
+	public int getColumnCount()
+	{
+		return mMap.getColumnCount();
 	}
 
 
 	public void print()
 	{
 		long timeCode = System.nanoTime();
-		int maxColumn = getColumnCount();
-		int maxRow = getRowCount();
+		int maxColumn = nextColumn();
+		int maxRow = nextRow();
 
 		System.out.print("");
 		System.out.print("\t");
@@ -164,7 +169,8 @@ public class SpreadSheet implements TableModel
 			System.out.print("\t");
 			for (int col = 0; col < maxColumn; col++)
 			{
-				CellValue v = getComputed(col, row, timeCode);
+				Cell cell = getCell(row, col);
+				Object v = cell == null ? null : cell.getDisplayValue(timeCode);
 				if (v == null)
 				{
 					System.out.print("");
@@ -180,90 +186,35 @@ public class SpreadSheet implements TableModel
 	}
 
 
-	public JScrollPane createUI()
+	public SpreadSheetTable createUI(WorkBook aWorkBook)
 	{
-		return mScrollPane;
+		SpreadSheetTable table = new TableFactory().createTable(aWorkBook, this, mColumns, mRowHeaderTitle, mRowNumberSize, mRowHeaders.isEmpty() ? 0 : mRowHeaderSize, mRowHeaders, mMap);
+
+		return table;
 	}
 
 
-	public CellValue getComputed(int aCol, int aRow, long aTimeCode)
+	/**
+	 * Returns the column with the index specified. This method create and add new columns when not found.
+	 */
+	public synchronized SpreadSheetTableColumn getColumn(int aColumn)
 	{
-		CellValue v = get(aCol, aRow);
-
-		if (v instanceof Formula)
+		while (mColumns.size() <= aColumn)
 		{
-			v = ((Formula)v).compute(this, aTimeCode);
-		}
-		else if (v != null)
-		{
-			v = v.clone();
+			mColumns.add(new SpreadSheetTableColumn(mColumns.size()));
 		}
 
-		return v;
+		return mColumns.get(aColumn);
 	}
 
 
-	public NumberValue getComputedNumber(Tuple aTuple, long aTimeCode)
+	public void setColumn(SpreadSheetTableColumn aColumn)
 	{
-		return (NumberValue)getComputed(aTuple, aTimeCode);
-	}
-
-
-	public CellValue getComputed(Tuple aTuple, long aTimeCode)
-	{
-		CellValue v = mValues.get(aTuple);
-
-		if (v instanceof Formula)
+		while (mColumns.size() <= aColumn.getModelIndex())
 		{
-			v = ((Formula)v).compute(this, aTimeCode);
+			mColumns.add(new SpreadSheetTableColumn(mColumns.size()));
 		}
-		else if (v != null)
-		{
-			v = v.clone();
-		}
-
-		return v;
-	}
-
-
-	private CellValue convertValue(Object aValue)
-	{
-		if (aValue == null)
-		{
-			return new NullValue();
-		}
-		if (aValue instanceof Double || aValue instanceof Float)
-		{
-			return new NumberValue(((java.lang.Number)aValue).doubleValue());
-		}
-		if (aValue instanceof Integer || aValue instanceof Long || aValue instanceof Short || aValue instanceof Byte)
-		{
-			return new NumberValue(((java.lang.Number)aValue).longValue());
-		}
-		if (aValue instanceof String)
-		{
-			return new TextValue((String)aValue);
-		}
-		if (aValue instanceof Boolean)
-		{
-			return new BooleanValue((Boolean)aValue);
-		}
-		if (aValue instanceof CellValue)
-		{
-			return (CellValue)aValue;
-		}
-		if (aValue instanceof Enum)
-		{
-			return new EnumValue((Enum)aValue);
-		}
-		if (aValue instanceof Date)
-		{
-			return new DateValue((Date)aValue);
-		}
-
-		System.out.println("Unsupported cell value, displaying as text: " + aValue.getClass());
-
-		return new TextValue(aValue.toString());
+		mColumns.set(aColumn.getModelIndex(), aColumn);
 	}
 
 
@@ -284,16 +235,16 @@ public class SpreadSheet implements TableModel
 	 * @return
 	 *
 	 */
-//	public int nextRow()
-//	{
-//		return getRowCount();
-//	}
-//
-//
-//	public int nextColumn()
-//	{
-//		return getColumnCount();
-//	}
+	public int nextRow()
+	{
+		return getRowCount();
+	}
+
+
+	public int nextColumn()
+	{
+		return getColumnCount();
+	}
 
 
 	public int getRowNumberSize()
@@ -347,177 +298,116 @@ public class SpreadSheet implements TableModel
 	}
 
 
-	private JScrollPane createTable()
+	@Override
+	public Iterator<Tuple> iterator()
 	{
-		mTable = new FixedTable(this);
-		mTable.setBorder(null);
-		mTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		mTable.setColumnSelectionAllowed(false);
-		mTable.setRowSelectionAllowed(true);
-		mTable.setCellSelectionEnabled(true);
-		mTable.setGridColor(new Color(0xDADCDD));
-		mTable.setRowHeight(19);
-		mTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		mTable.setShowGrid(false);
-		mTable.setIntercellSpacing(new Dimension(0, 0));
-		mTable.setDefaultRenderer(Object.class, new TableCellRenderer(mTable, mStyles));
-		mTable.setSelectionForeground(null);
-		mTable.setSelectionBackground(null);
+		ArrayList<Tuple> list = new ArrayList<>();
 
-		ListSelectionModel selectionModel = mTable.getSelectionModel();
-
-		TableColumnModel columnModel = mTable.getColumnModel();
-		columnModel.setColumnSelectionAllowed(true);
-
-		JTableHeader tableHeader = mTable.getTableHeader();
-		tableHeader.setReorderingAllowed(false);
-		tableHeader.setDefaultRenderer(new ColumnHeaderRenderer("", mRowNumberSize, 0, mTable));
-
-		RowNumberTable rowTable = new RowNumberTable(mTable, mRowNumberSize, mRowHeaderSize, mRowHeaders, mStyles);
-
-		ColumnHeaderRenderer cornerLeft = new ColumnHeaderRenderer(mRowHeaderTitle, mRowNumberSize, mRowHeaderSize, mTable);
-		cornerLeft.setDrawLeftBorder(true);
-
-		mScrollPane = new JScrollPane(mTable);
-		mScrollPane.setRowHeaderView(rowTable);
-		mScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerLeft);
-		mScrollPane.setBorder(null);
-
-		selectionModel.addListSelectionListener(aEvent -> mScrollPane.repaint());
-
-		columnModel.addColumnModelListener(new TableColumnModelListener()
+		for (int row = 0; row < mMap.getRowCount(); row++)
 		{
-			@Override
-			public void columnAdded(TableColumnModelEvent aE)
+			MapRow<Cell> r = mMap.get(row);
+			if (r != null)
 			{
+				for (int cell = 0; cell < r.size(); cell++)
+				{
+					if (r.get(cell) != null)
+					{
+						list.add(new Tuple(row, cell));
+					}
+				}
 			}
-
-
-			@Override
-			public void columnRemoved(TableColumnModelEvent aE)
-			{
-			}
-
-
-			@Override
-			public void columnMoved(TableColumnModelEvent aE)
-			{
-			}
-
-
-			@Override
-			public void columnMarginChanged(ChangeEvent aE)
-			{
-			}
-
-
-			@Override
-			public void columnSelectionChanged(ListSelectionEvent aE)
-			{
-				mScrollPane.repaint();
-			}
-		});
-
-		return mScrollPane;
-	}
-
-
-	/**
-	 * Returns the column with the index specified. This method create and add new columns when not found.
-	 */
-	public synchronized SpreadSheetTableColumn getColumn(int aColumn)
-	{
-		while (mColumns.size() <= aColumn)
-		{
-			mColumns.add(new SpreadSheetTableColumn(mColumns.size()));
 		}
 
-		return mColumns.get(aColumn);
+		return list.iterator();
 	}
 
 
-	public void setColumn(SpreadSheetTableColumn aColumn)
+	@Override
+	public String toString()
 	{
-		while (mColumns.size() <= aColumn.getModelIndex())
+		return mMap.toString();
+	}
+
+
+	public void setColumnWidths(int aStartColumn, int... aWidths)
+	{
+		for (int i = 0; i < aWidths.length; i++)
 		{
-			mColumns.add(new SpreadSheetTableColumn(mColumns.size()));
+			SpreadSheetTableColumn column = getColumn(aStartColumn + i);
+			column.setMinWidth(0);
+			column.setMaxWidth(32000);
+			column.setPreferredWidth(aWidths[i]);
 		}
-		mColumns.set(aColumn.getModelIndex(), aColumn);
+	}
 
-		fireListeners(new TableModelEvent(this));
+
+	public void clear()
+	{
+		mMap.clear();
+	}
+
+
+	public SpreadSheet setDataLookup(DataLookup aDataLookup)
+	{
+		mDataLookup = aDataLookup;
+		return this;
 	}
 
 
 	@Override
-	public int getRowCount()
+	public CellValue getComputeValueAt(String aReference, int aRow, int aColumn, long aTimeCode)
 	{
-		return mValues.getRowCount();
-	}
-
-
-	@Override
-	public int getColumnCount()
-	{
-		return 20;//mValues.getColumnCount();
-	}
-
-
-	@Override
-	public String getColumnName(int aColumnIndex)
-	{
-		return getColumn(aColumnIndex).getHeaderValue().toString();
-	}
-
-
-	@Override
-	public Class<?> getColumnClass(int aColumnIndex)
-	{
-		return getColumn(aColumnIndex).getColumnClass();
-	}
-
-
-	@Override
-	public boolean isCellEditable(int aRowIndex, int aColumnIndex)
-	{
-		return true;
-	}
-
-
-	@Override
-	public Object getValueAt(int aRowIndex, int aColumnIndex)
-	{
-		return getComputed(aColumnIndex, aRowIndex, System.nanoTime());
-	}
-
-
-	@Override
-	public void setValueAt(Object aValue, int aRowIndex, int aColumnIndex)
-	{
-		mValues.put(aColumnIndex, aRowIndex, (CellValue)aValue);
-
-		fireListeners(new TableModelEvent(this, aRowIndex, aRowIndex, aColumnIndex));
-	}
-
-
-	@Override
-	public void addTableModelListener(TableModelListener aListener)
-	{
-		mListeners.add(aListener);
-	}
-
-
-	@Override
-	public void removeTableModelListener(TableModelListener aListener)
-	{
-		mListeners.remove(aListener);
-	}
-
-
-	private void fireListeners(TableModelEvent aEvent)
-	{
-		for (TableModelListener listener : mListeners)
+		if (aReference != null)
 		{
-			listener.tableChanged(aEvent);
+			return mDataLookup.getDataProvider(aReference).getComputeValueAt(null, aRow, aColumn, aTimeCode);
+		}
+
+		Cell cell = getCell(aRow, aColumn);
+
+		if (cell == null)
+		{
+//			System.out.println(aRow+" "+aColumn+" #"+"null");
+			return null;
+		}
+
+		CellValue v = cell.computeValue(aTimeCode);
+			System.out.println(aRow+" "+aColumn+" "+v);
+		return v;
+	}
+
+
+	@Override
+	public SpreadSheetFunctions getFunctions()
+	{
+		return mFunctions;
+	}
+
+
+	public void setFunctions(SpreadSheetFunctions aFunctions)
+	{
+		mFunctions = aFunctions;
+	}
+
+
+	public void validateData()
+	{
+		long time = System.currentTimeMillis();
+
+		for (int row = 0; row < mMap.getRowCount(); row++)
+		{
+			MapRow<Cell> r = mMap.get(row);
+			if (r != null)
+			{
+				for (int c = 0; c < r.size(); c++)
+				{
+					Cell cell = r.get(c);
+
+					if (cell != null)
+					{
+						cell.computeValue(time);
+					}
+				}
+			}
 		}
 	}
 }

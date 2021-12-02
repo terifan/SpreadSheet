@@ -18,15 +18,21 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import org.terifan.spreadsheet.CellStyle;
-import org.terifan.spreadsheet.Map;
 
 
 public class RowNumberTable extends JTable implements ChangeListener, PropertyChangeListener, TableModelListener
 {
-	private static final long serialVersionUID = 1L;
+	private final static long serialVersionUID = 1L;
+
+	private final static Color B1B5BA = new Color(0xB1B5BA);
+	private final static Color FFDC61 = new Color(0xFFDC61);
+	private final static Color F0F0F0 = new Color(0xF0F0F0);
+	private final static Color FF0000 = new Color(0xff0000);
+	private final static Color C28A30 = new Color(0xC28A30);
+	private final static Color BLACK = new Color(0x000000);
 
 	private JTable mTable;
 	private int mRowNumberSize;
@@ -34,7 +40,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	private HashMap<Integer, String> mRowHeaders;
 
 
-	public RowNumberTable(FixedTable aTable, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders, Map<CellStyle> aStyles)
+	public RowNumberTable(FixedTable aTable, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders)
 	{
 		mRowNumberSize = aRowNumberSize;
 		mRowHeaderSize = aRowHeaderSize;
@@ -42,19 +48,28 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 
 		mTable = aTable;
 		mTable.addPropertyChangeListener(this);
-		mTable.getModel().addTableModelListener(this);
+		mTable.getModel().addTableModelListener(aEvent ->
+		{
+			revalidate();
+			DefaultTableModel model = (DefaultTableModel)getModel();
+			int rowCount = mTable.getModel().getRowCount();
+			while (model.getRowCount() < rowCount)
+			{
+				model.addRow(new Object[0]);
+			}
+		});
 
 		int width = mRowNumberSize + mRowHeaderSize;
 
 		TableColumn column = new TableColumn();
 		column.setHeaderValue(" ");
-		column.setCellRenderer(new RowNumberRenderer(aTable, aStyles, true));
+		column.setCellRenderer(new RowNumberRenderer(aTable, false));
 		column.setPreferredWidth(width);
 
 		super.setFocusable(false);
 		super.setAutoCreateColumnsFromModel(false);
 		super.setSelectionModel(mTable.getSelectionModel());
-		super.setGridColor(new Color(0xff0000));
+		super.setGridColor(FF0000);
 		super.addColumn(column);
 		super.setPreferredScrollableViewportSize(getPreferredSize());
 		super.setShowGrid(false);
@@ -109,7 +124,7 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	@Override
 	public Object getValueAt(int row, int column)
 	{
-		return Integer.toString(row);
+		return Integer.toString(1 + row);
 	}
 
 
@@ -166,21 +181,14 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 	}
 
 
-	@Override
-	public void tableChanged(TableModelEvent e)
-	{
-		revalidate();
-	}
-
-
 	private class RowNumberRenderer extends TableCellRenderer
 	{
 		private static final long serialVersionUID = 1L;
 
 
-		public RowNumberRenderer(FixedTable aTable, Map<CellStyle> aStyles, boolean aDrawLeftBorder)
+		public RowNumberRenderer(FixedTable aTable, boolean aDrawLeftBorder)
 		{
-			super(aTable, aTable, aStyles);
+			super(aTable, aTable);
 
 			setHorizontalAlignment(JLabel.CENTER);
 
@@ -206,20 +214,12 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 				}
 			}
 
-			if (aSelected)
-			{
-				setBackground(new Color(0xFFDC61));
-			}
-			else
-			{
-				setBackground(new Color(0xF0F0F0));
-			}
-
+			setBackground(aSelected ? FFDC61 : F0F0F0);
 			setText((aValue == null) ? "" : aValue.toString());
 
 			if (mDrawLeftBorder)
 			{
-				setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(aSelected ? 0xC28A30 : 0xB1B5BA)));
+				setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, aSelected ? C28A30 : B1B5BA));
 			}
 			else
 			{
@@ -233,34 +233,27 @@ public class RowNumberTable extends JTable implements ChangeListener, PropertyCh
 		@Override
 		protected void paintComponent(Graphics aGraphics)
 		{
+			boolean rowSelected = mTable.isRowSelected(mRow);
+
 			if (mRowHeaderSize > 0)
 			{
-				((Graphics2D)aGraphics).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-
 				int h = getHeight();
-				boolean rowSelected = mTable.isRowSelected(mRow);
 
-				aGraphics.setColor(rowSelected ? new Color(0xFFDC61) : new Color(0xF0F0F0));
-				aGraphics.fillRect(0, 0, mRowNumberSize + mRowHeaderSize, h);
+				TextPainter.drawString(getText(), 0, 0, mRowNumberSize, h, true, aGraphics, BLACK);
 
-				aGraphics.setColor(Color.BLACK);
-				TextPainter.drawString(getText(), 0, 0, mRowNumberSize, getHeight(), true, aGraphics);
+				String text = mRowHeaders.getOrDefault(mRow, "");
 
-				if (mRowHeaderSize > 0)
-				{
-					String text = mRowHeaders.getOrDefault(mRow, "");
+				aGraphics.setColor(rowSelected ? FFDC61 : F0F0F0);
+				aGraphics.fillRect(mRowNumberSize, 0, mRowHeaderSize, h);
+				aGraphics.setColor(B1B5BA);
+				aGraphics.drawLine(mRowNumberSize, 0, mRowNumberSize, h);
 
-					aGraphics.setColor(rowSelected ? new Color(0xFFDC61) : new Color(0xF0F0F0));
-					aGraphics.fillRect(mRowNumberSize, 0, mRowHeaderSize, h);
-					aGraphics.setColor(new Color(0xB1B5BA));
-					aGraphics.drawLine(mRowNumberSize, 0, mRowNumberSize, h);
-
-					aGraphics.setColor(Color.BLACK);
-					TextPainter.drawString(text, mRowNumberSize + 2, 0, mRowHeaderSize - 4, getHeight(), false, aGraphics);
-				}
+				TextPainter.drawString(text, mRowNumberSize + 2, 0, mRowHeaderSize - 4, h, false, aGraphics, BLACK);
 			}
 			else
 			{
+				setBackground(rowSelected ? FFDC61 : F0F0F0);
+
 				super.paintComponent(aGraphics);
 			}
 		}

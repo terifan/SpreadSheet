@@ -1,19 +1,80 @@
 package org.terifan.spreadsheet;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
-public class MapRow<T> extends ArrayList<T>
+public class MapRow<T> implements Iterable<T>
 {
-	@Override
-	public void trimToSize()
+	private final ArrayList<T> mList;
+
+
+	public MapRow()
+	{
+		mList = new ArrayList<>();
+	}
+
+
+	public int size()
+	{
+		return mList.size();
+	}
+
+
+	public T remove(int aIndex)
+	{
+		return mList.remove(aIndex);
+	}
+
+
+	public T get(int aIndex)
+	{
+		return mList.get(aIndex);
+	}
+
+
+	public boolean add(T aItem)
+	{
+		return mList.add(aItem);
+	}
+
+
+	public T set(int aIndex, T aItem)
+	{
+		return mList.set(aIndex, aItem);
+	}
+
+
+	public boolean isEmpty()
+	{
+		for (T item : mList)
+		{
+			if (item != null)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+	public int trim()
 	{
 		while (size() > 0 && get(size() - 1) == null)
 		{
 			remove(size() - 1);
 		}
 
-		super.trimToSize();
+		mList.trimToSize();
+
+		return size();
+	}
+
+
+	@Override
+	public Iterator<T> iterator()
+	{
+		return mList.iterator();
 	}
 
 
@@ -40,7 +101,6 @@ public class MapRow<T> extends ArrayList<T>
 	}
 
 
-	@Override
 	public boolean equals(Object aOther)
 	{
 		if (aOther instanceof MapRow)

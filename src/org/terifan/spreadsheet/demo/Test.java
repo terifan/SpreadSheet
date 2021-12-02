@@ -1,17 +1,13 @@
 package org.terifan.spreadsheet.demo;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import org.terifan.spreadsheet.CellStyle;
-import org.terifan.spreadsheet.Range;
+import org.terifan.spreadsheet.DataLookup;
+import org.terifan.spreadsheet.DataProvider;
 import org.terifan.spreadsheet.SpreadSheet;
-import org.terifan.spreadsheet.SpreadSheetTableColumn;
-import org.terifan.spreadsheet.functions.Subtract;
-import org.terifan.spreadsheet.functions.Sum;
-import org.terifan.spreadsheet.Tuple;
 import org.terifan.spreadsheet.ui.WorkBook;
 
 
@@ -23,58 +19,82 @@ public class Test
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-			SpreadSheet ss = new SpreadSheet();
-			ss.setColumn(new SpreadSheetTableColumn(0, "John"));
-			ss.setColumn(new SpreadSheetTableColumn(1, "Lisa"));
-			ss.setColumn(new SpreadSheetTableColumn(3, "Total", 200));
+			SpreadSheet ss1 = new SpreadSheet();
+//			ss.setColumn(new SpreadSheetTableColumn(0, "John"));
+//			ss.setColumn(new SpreadSheetTableColumn(1, "Lisa"));
+//			ss.setColumn(new SpreadSheetTableColumn(3, "Total", 200));
 
 //			ss.setStaticColumnCount(2);
 
-			ss.setRowHeaderTitle("alpha");
-			ss.setRowHeader(0, "q");
-			ss.setRowHeader(1, "w");
-			ss.setRowHeader(2, "e");
-			ss.setRowHeader(3, "r");
-			ss.setRowHeader(4, "t");
-			ss.setRowHeader(5, "y");
+//			ss.setRowHeaderTitle("alpha");
+//			ss.setRowHeader(0, "q");
+//			ss.setRowHeader(1, "w");
+//			ss.setRowHeader(2, "e");
+//			ss.setRowHeader(3, "r");
+//			ss.setRowHeader(4, "t");
+//			ss.setRowHeader(5, "y");
 
-//			ss.set(1, 0, "sum(a0:a3");
-			ss.set(0, 0, 4);
-			ss.set(0, 1, 7);
-			ss.set(0, 2, 12);
-			ss.set(1, 0, 10);
-			ss.set(1, 1, 5);
-			ss.set(1, 2, 8);
-			ss.set(3, 0, new Sum(new Range(new Tuple(0, 0), new Tuple(1, 0))));
-			ss.set(3, 1, new Sum(new Range(new Tuple(0, 1), new Tuple(1, 1))));
-			ss.set(3, 2, new Sum(new Range(new Tuple(0, 2), new Tuple(1, 2))));
-			ss.set(0, 4, new Sum(new Range(new Tuple(0, 0), new Tuple(0, 2))));
-			ss.set(1, 4, new Sum(new Range(new Tuple(1, 0), new Tuple(1, 2))));
-			ss.set(3, 4, new Sum(new Range(new Tuple(0, 4), new Tuple(1, 4))));
+			ss1.setValueAt(4, 0, 0);
+			ss1.setValueAt(7, 1, 0);
+			ss1.setValueAt(12, 2, 0);
+			ss1.setValueAt(10, 0, 1);
+			ss1.setValueAt(5, 1, 1);
+			ss1.setValueAt(8, 2, 1);
+			ss1.setValueAt("=SUM(A1:B1)", 0, 3);
+			ss1.setValueAt("=SUM(A2:B2)", 1, 3);
+			ss1.setValueAt("=SUM(A3:B3)", 2, 3);
+			ss1.setValueAt("=SUM(A1:A3)", 4, 0);
+			ss1.setValueAt("=SUM(B1:B3)", 4, 1);
+			ss1.setValueAt("=SUM(A5:B5)", 4, 3);
+//			ss.setValueAt(5, 4, "=SUM(A5)");
+//			ss.setValueAt(12, 0, "=count(a1:a5)");
+//			ss.setValueAt(7, 0, "=sum(a1:d5)");
+//			ss.setValueAt(7, 3, "=pow(a1,b1)");
+//			ss.setValueAt(8, 3, "=a1^b1");
+//			ss.setValueAt(6, 3, "=sum(a1,b1,a2,b2,a3,b3)");
+//			ss.setValueAt(6, 5, "=count(a1,b1,c1)");
+//
+//			ss.setValueAt(40, 3, 1);
+//			ss.setValueAt(3, 40, 1);
 
-			ss.set(3, 6, new Subtract(new Tuple(3, 4), new Tuple(0, 0)));
+			ss1.setValueAt("=[sheet1]!a1", 10, 0);
+			ss1.setValueAt("=[sheet2]!a1", 10, 1);
 
-			ss.set(3, 40, 1);
-			ss.set(40, 3, 1);
+			ss1.setStyleAt(0, 3, CellStyle.GOOD);
+			ss1.setStyleAt(2, 3, CellStyle.BAD);
+			ss1.setStyleAt(4, 3, CellStyle.NEUTRAL);
 
-			ss.setStyle(3, 0, CellStyle.GOOD);
-			ss.setStyle(3, 2, CellStyle.BAD);
-			ss.setStyle(3, 4, CellStyle.NEUTRAL);
+			ss1.setStyleAt(6, 3, CellStyle.BAD);
+			ss1.setStyleAt(7, 3, CellStyle.GOOD);
 
-			ss.setStyle(3, 6, CellStyle.BAD);
-			ss.setStyle(3, 7, CellStyle.GOOD);
+			ss1.setStyleAt(6, 5, CellStyle.BAD);
+			ss1.setStyleAt(7, 5, CellStyle.GOOD);
+			ss1.setStyleAt(6, 6, CellStyle.NEUTRAL);
+			ss1.setStyleAt(7, 6, CellStyle.NEUTRAL);
 
-			ss.setStyle(5, 6, CellStyle.BAD);
-			ss.setStyle(5, 7, CellStyle.GOOD);
-			ss.setStyle(6, 6, CellStyle.NEUTRAL);
-			ss.setStyle(6, 7, CellStyle.NEUTRAL);
+			ss1.setStyleAt(7, 0, CellStyle.NEUTRAL);
 
-			ss.setStyle(0, 7, CellStyle.NEUTRAL);
+			SpreadSheet ss2 = new SpreadSheet().ensureCapacity(100, 26);
 
-//			ss.print();
+			ss2.setValueAt(111, 0, 0);
+
+			DataLookup dataLookup = new DataLookup()
+			{
+				@Override
+				public DataProvider getDataProvider(String aReference)
+				{
+					if (aReference.equals("[sheet1]")) return ss1;
+					if (aReference.equals("[sheet2]")) return ss2;
+					throw new IllegalArgumentException(aReference);
+				}
+			};
+
+			ss1.setDataLookup(dataLookup);
+			ss2.setDataLookup(dataLookup);
 
 			WorkBook workBook = new WorkBook();
-			workBook.addTab("Sheet1", ss);
+			workBook.addTab("Sheet1", ss1);
+			workBook.addTab("Sheet2", ss2);
 			workBook.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
 			JFrame frame = new JFrame();

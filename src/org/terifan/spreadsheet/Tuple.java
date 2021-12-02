@@ -3,14 +3,49 @@ package org.terifan.spreadsheet;
 
 public class Tuple
 {
-	int mRow;
-	int mCol;
+	private boolean mLockedRow;
+	private boolean mLockedCol;
+	private int mRow;
+	private int mCol;
 
 
-	public Tuple(int aCol , int aRow)
+	public Tuple(int aRow, int aCol)
 	{
 		mCol = aCol;
-		mRow = aRow;
+		mRow = aRow + 1;
+
+		if (mCol < 0 || mRow <= 0)
+		{
+			throw new IllegalArgumentException("Illegal position: " + this);
+		}
+	}
+
+
+	public Tuple(String aExpression)
+	{
+		mLockedCol = aExpression.startsWith("$");
+
+		int i = mLockedCol ? 1 : 0;
+
+		for (; i < aExpression.length() && !(aExpression.charAt(i) >= '0' && aExpression.charAt(i) <= '9'); i++)
+		{
+		}
+
+		mLockedRow = aExpression.charAt(i - 1) == '$';
+
+		mCol = Convert.parseColumnIndex(aExpression.substring((mLockedCol ? 1 : 0), (mLockedRow ? i-1 : i)));
+		mRow = Integer.parseInt(aExpression.substring(i));
+
+		if (mCol < 0 || mRow <= 0)
+		{
+			throw new IllegalArgumentException("Illegal position: " + this);
+		}
+	}
+
+
+	public int getRow()
+	{
+		return mRow - 1;
 	}
 
 
@@ -20,19 +55,22 @@ public class Tuple
 	}
 
 
-	public int getRow()
+	/**
+	 * Create a Tuple relative to this Tuple accounting for locked column/row.
+	 */
+	public Tuple relative(int aRow, int aCol)
 	{
-		return mRow;
+		Tuple t = new Tuple(getRow() + (mLockedRow ? 0 : aRow), getCol() + (mLockedCol ? 0 : aCol));
+		t.mLockedCol = mLockedCol;
+		t.mLockedRow = mLockedRow;
+		return t;
 	}
 
 
 	@Override
 	public int hashCode()
 	{
-		int hash = 5;
-		hash = 97 * hash + this.mRow;
-		hash = 97 * hash + this.mCol;
-		return hash;
+		return Integer.rotateLeft(this.mRow, 16) ^ this.mCol;
 	}
 
 
@@ -67,6 +105,23 @@ public class Tuple
 	@Override
 	public String toString()
 	{
-		return "Tuple{" + "mRow=" + mRow + ", mCol=" + mCol + '}';
+		return (mLockedCol ? "$" : "") + Convert.formatColumnIndex(mCol) + (mLockedRow ? "$" : "") + mRow;
 	}
+
+
+//	public static void main(String ... args)
+//	{
+//		try
+//		{
+//			System.out.println(new Tuple("A1").relative(1, 1));
+//			System.out.println(new Tuple("$A1").relative(1, 1));
+//			System.out.println(new Tuple("A$1").relative(1, 1));
+//			System.out.println(new Tuple("$A$1").relative(1, 1));
+//			System.out.println(new Tuple("A1").relative(-1, 0));
+//		}
+//		catch (Throwable e)
+//		{
+//			e.printStackTrace(System.out);
+//		}
+//	}
 }

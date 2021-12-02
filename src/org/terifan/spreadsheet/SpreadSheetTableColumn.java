@@ -6,39 +6,33 @@ import javax.swing.table.TableColumn;
 public class SpreadSheetTableColumn extends TableColumn
 {
 	private static final long serialVersionUID = 1L;
-	private Class<?> mClass = String.class;
 
 
-	public SpreadSheetTableColumn(int aModelIndex)
+	public SpreadSheetTableColumn(int aIndex)
 	{
-		super(aModelIndex);
-		setHeaderValue(Character.toString((char)('A' + aModelIndex)));
+		super(aIndex);
+		setHeaderValue(Convert.formatColumnIndex(aIndex));
 	}
 
 
-	public SpreadSheetTableColumn(int aModelIndex, Object aHeaderValue)
+	public SpreadSheetTableColumn(int aIndex, Object aHeaderValue)
 	{
-		super(aModelIndex);
+		super(aIndex);
 		setHeaderValue(aHeaderValue);
 	}
 
 
-	public SpreadSheetTableColumn(int aModelIndex, Object aHeaderValue, int aPreferredWidth)
+	public SpreadSheetTableColumn(int aIndex, Object aHeaderValue, int aPreferredWidth)
 	{
-		super(aModelIndex);
+		super(aIndex);
 		setHeaderValue(aHeaderValue);
 		setPreferredWidth(aPreferredWidth);
 	}
 
 
-	public Class<?> getColumnClass()
+	@Override
+	public String toString()
 	{
-		return mClass;
-	}
-
-
-	public void setColumnClass(Class<?> aClass)
-	{
-		mClass = aClass;
+		return getHeaderValue().toString();
 	}
 }
