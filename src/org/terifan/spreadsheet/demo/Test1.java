@@ -24,11 +24,12 @@ public class Test1
 			ss.setColumn(new SpreadSheetTableColumn(1, "Last Modified", 150));
 			ss.setColumn(new SpreadSheetTableColumn(2, "Length", 120));
 
-			for (File file : new File("c:\\").listFiles())
+			for (File file : new File(System.getProperty("user.home")).listFiles())
 			{
-				ss.setValueAt(file.getName(), ss.nextRow(), 0);
-				ss.setValueAt(new Date(file.lastModified()), ss.getRowCount(), 1);
-				ss.setValueAt(file.length(), ss.getRowCount(), 2);
+				int row = ss.getRowCount();
+				ss.setValueAt(file.getName(), row, 0);
+				ss.setValueAt(new Date(file.lastModified()), row, 1);
+				ss.setValueAt(file.isDirectory() ? 0 : file.length(), row, 2);
 			}
 
 //			ss.setValueAt(2, ss.nextRow(), new Sum(new Range(new Tuple(2, 0), new Tuple(2, ss.lastRow()))));
