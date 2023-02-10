@@ -104,7 +104,7 @@ public class ExpressionParser
 //			System.out.println(new ExpressionParser().compile("[book][sheet1]!a1+[book][sheet2]!a1").execute(data1, 0));
 //			System.out.println(new ExpressionParser().compile("vlookup([data.csv][sheet1],m2,b2,e24)").execute(data1, 0));
 //			System.out.println(new ExpressionParser().compile("vlookup([data.csv][sheet1],$e24,$f$2,$m$2)").dump());
-			System.out.println(new ExpressionParser().compile("sum(0,'test')").execute(data1, 0));
+//			System.out.println(new ExpressionParser().compile("sum(0,'test')").execute(data1, 0));
 		}
 		catch (Throwable e)
 		{

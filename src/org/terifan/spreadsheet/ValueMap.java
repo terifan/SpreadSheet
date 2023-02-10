@@ -1,16 +1,19 @@
 package org.terifan.spreadsheet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 
-public class Map<T> implements Iterable<MapRow<T>>
+public class ValueMap<T> implements Iterable<MapRow<T>>, Serializable
 {
+	private final static long serialVersionUID = 1L;
+
 	private ArrayList<MapRow<T>> mMap;
 	private int mColumnCount;
 
 
-	public Map()
+	public ValueMap()
 	{
 		mMap = new ArrayList<>();
 	}
@@ -140,7 +143,7 @@ public class Map<T> implements Iterable<MapRow<T>>
 	}
 
 
-	public void addAll(Map<T> aOtherMap)
+	public void addAll(ValueMap<T> aOtherMap)
 	{
 		for (int rowIndex = 0; rowIndex < aOtherMap.mMap.size(); rowIndex++)
 		{
@@ -183,9 +186,9 @@ public class Map<T> implements Iterable<MapRow<T>>
 	@Override
 	public boolean equals(Object aOther)
 	{
-		if (aOther instanceof Map)
+		if (aOther instanceof ValueMap)
 		{
-			return mMap.equals(((Map)aOther).mMap);
+			return mMap.equals(((ValueMap)aOther).mMap);
 		}
 		return false;
 	}

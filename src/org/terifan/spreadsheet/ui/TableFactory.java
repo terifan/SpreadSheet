@@ -22,7 +22,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 import org.terifan.spreadsheet.Cell;
-import org.terifan.spreadsheet.Map;
+import org.terifan.spreadsheet.ValueMap;
 import org.terifan.spreadsheet.SpreadSheet;
 import org.terifan.spreadsheet.SpreadSheetTableColumn;
 
@@ -32,7 +32,7 @@ public class TableFactory
 	private final static Color DADCDD = new Color(0xDADCDD);
 
 
-	public SpreadSheetTable createTable(WorkBook aWorkBook, SpreadSheet aSpreadSheet, List<SpreadSheetTableColumn> aColumns, String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders, Map<Cell> aStyles)
+	public SpreadSheetTable createTable(WorkBook aWorkBook, SpreadSheet aSpreadSheet, List<SpreadSheetTableColumn> aColumns, String aRowHeaderTitle, int aRowNumberSize, int aRowHeaderSize, HashMap<Integer, String> aRowHeaders, ValueMap<Cell> aStyles)
 	{
 		TableModelWrapper model = new TableModelWrapper(aSpreadSheet);
 

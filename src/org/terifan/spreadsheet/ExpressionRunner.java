@@ -133,7 +133,7 @@ class ExpressionRunner
 				{
 					if ("SUM".equals(fn))
 					{
-						System.out.println(params);
+//						System.out.println(params);
 					}
 
 					v = new CellValue(0L);
@@ -225,15 +225,15 @@ class ExpressionRunner
 				}
 				else if ("REPLACE".equals(fn))
 				{
-					System.out.println(params);
+//					System.out.println(params);
 
 					String p0 = params.get(0).toString().replace("'", "").replace("\"", "");
 					String p1 = params.get(1).toString().replace("'", "").replace("\"", "");
 					String p2 = params.get(2).toString().replace("'", "").replace("\"", "");
 
-					System.out.println(p0);
-					System.out.println(p1);
-					System.out.println(p2);
+//					System.out.println(p0);
+//					System.out.println(p1);
+//					System.out.println(p2);
 
 					v = new CellValue(p0.replace(p1, p2));
 				}

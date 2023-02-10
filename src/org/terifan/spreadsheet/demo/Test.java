@@ -1,10 +1,10 @@
 package org.terifan.spreadsheet.demo;
 
 import java.awt.BorderLayout;
+import java.util.Random;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-import org.terifan.spreadsheet.CellStyle;
 import org.terifan.spreadsheet.DataLookup;
 import org.terifan.spreadsheet.DataProvider;
 import org.terifan.spreadsheet.SpreadSheet;
@@ -20,63 +20,22 @@ public class Test
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 			SpreadSheet ss1 = new SpreadSheet();
-//			ss.setColumn(new SpreadSheetTableColumn(0, "John"));
-//			ss.setColumn(new SpreadSheetTableColumn(1, "Lisa"));
-//			ss.setColumn(new SpreadSheetTableColumn(3, "Total", 200));
+			ss1.setValueAt(0, 0, "Number of fruits");
+			ss1.setValueAt(0, 1, "=count([sheet2]!a1:a100)");
+			ss1.setValueAt(1, 0, "Value of all fruits");
+			ss1.setValueAt(1, 1, "=sum([sheet2]!b1:b100)");
+			ss1.setValueAt(2, 0, "Average value of all fruits");
+			ss1.setValueAt(2, 1, "=b2/b1");
+			ss1.ensureCapacity(10, 10);
+			ss1.setColumnWidths(0, 200); // not working
 
-//			ss.setStaticColumnCount(2);
-
-//			ss.setRowHeaderTitle("alpha");
-//			ss.setRowHeader(0, "q");
-//			ss.setRowHeader(1, "w");
-//			ss.setRowHeader(2, "e");
-//			ss.setRowHeader(3, "r");
-//			ss.setRowHeader(4, "t");
-//			ss.setRowHeader(5, "y");
-
-			ss1.setValueAt(4, 0, 0);
-			ss1.setValueAt(7, 1, 0);
-			ss1.setValueAt(12, 2, 0);
-			ss1.setValueAt(10, 0, 1);
-			ss1.setValueAt(5, 1, 1);
-			ss1.setValueAt(8, 2, 1);
-			ss1.setValueAt("=SUM(A1:B1)", 0, 3);
-			ss1.setValueAt("=SUM(A2:B2)", 1, 3);
-			ss1.setValueAt("=SUM(A3:B3)", 2, 3);
-			ss1.setValueAt("=SUM(A1:A3)", 4, 0);
-			ss1.setValueAt("=SUM(B1:B3)", 4, 1);
-			ss1.setValueAt("=SUM(A5:B5)", 4, 3);
-//			ss.setValueAt(5, 4, "=SUM(A5)");
-//			ss.setValueAt(12, 0, "=count(a1:a5)");
-//			ss.setValueAt(7, 0, "=sum(a1:d5)");
-//			ss.setValueAt(7, 3, "=pow(a1,b1)");
-//			ss.setValueAt(8, 3, "=a1^b1");
-//			ss.setValueAt(6, 3, "=sum(a1,b1,a2,b2,a3,b3)");
-//			ss.setValueAt(6, 5, "=count(a1,b1,c1)");
-//
-//			ss.setValueAt(40, 3, 1);
-//			ss.setValueAt(3, 40, 1);
-
-			ss1.setValueAt("=[sheet1]!a1", 10, 0);
-			ss1.setValueAt("=[sheet2]!a1", 10, 1);
-
-			ss1.setStyleAt(0, 3, CellStyle.GOOD);
-			ss1.setStyleAt(2, 3, CellStyle.BAD);
-			ss1.setStyleAt(4, 3, CellStyle.NEUTRAL);
-
-			ss1.setStyleAt(6, 3, CellStyle.BAD);
-			ss1.setStyleAt(7, 3, CellStyle.GOOD);
-
-			ss1.setStyleAt(6, 5, CellStyle.BAD);
-			ss1.setStyleAt(7, 5, CellStyle.GOOD);
-			ss1.setStyleAt(6, 6, CellStyle.NEUTRAL);
-			ss1.setStyleAt(7, 6, CellStyle.NEUTRAL);
-
-			ss1.setStyleAt(7, 0, CellStyle.NEUTRAL);
-
-			SpreadSheet ss2 = new SpreadSheet().ensureCapacity(100, 26);
-
-			ss2.setValueAt(111, 0, 0);
+			SpreadSheet ss2 = new SpreadSheet();
+			ss2.parseValuesTo(0, 0, "apple\napricot\navocado\nbanana\nblackberries\nblackcurrant\nblueberries\nboysenberries\ncapers\ncherry\ncranberry\ndates\ndurian\nelderberry\ngrape\ngrapefruit\nguava\njackfruit\njujube\nkiwi\nkumquat\nlemon\nlime\nlychee\nmango\nmelon\nmulberry\nolives\norange\npapaya\npear\npersimmon\npineapple\nplum\npomegranate\nrambutan\nraspberry\nredberries\nrhubarb\nstarfruit\nstrawberry\ntangerine\nwatermelon");
+			Random rnd = new Random();
+			for (int i = 0; i < ss2.getRowCount(); i++)
+			{
+				ss2.setValueAt(i, 1, rnd.nextInt(1000)/10.0);
+			}
 
 			DataLookup dataLookup = new DataLookup()
 			{
@@ -94,7 +53,7 @@ public class Test
 
 			WorkBook workBook = new WorkBook();
 			workBook.addTab("Sheet1", ss1);
-			workBook.addTab("Sheet2", ss2);
+			workBook.addTab("Fruits", ss2);
 			workBook.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
 			JFrame frame = new JFrame();

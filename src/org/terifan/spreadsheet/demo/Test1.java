@@ -27,9 +27,9 @@ public class Test1
 			for (File file : new File(System.getProperty("user.home")).listFiles())
 			{
 				int row = ss.getRowCount();
-				ss.setValueAt(file.getName(), row, 0);
-				ss.setValueAt(new Date(file.lastModified()), row, 1);
-				ss.setValueAt(file.isDirectory() ? 0 : file.length(), row, 2);
+				ss.setValueAt(row, 0, file.getName());
+				ss.setValueAt(row, 1, new Date(file.lastModified()));
+				ss.setValueAt(row, 2, file.isDirectory() ? 0 : file.length());
 			}
 
 //			ss.setValueAt(2, ss.nextRow(), new Sum(new Range(new Tuple(2, 0), new Tuple(2, ss.lastRow()))));

@@ -17,8 +17,8 @@ public class Test2
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 			SpreadSheet ss = new SpreadSheet();
-			ss.setValueAt(1, 3, 3);
-			ss.setValueAt(2, 4, 3);
+			ss.setValueAt(3, 3, 1);
+			ss.setValueAt(4, 3, 2);
 
 			System.out.println(ss.getRowCount());
 			System.out.println(ss.getColumnCount());

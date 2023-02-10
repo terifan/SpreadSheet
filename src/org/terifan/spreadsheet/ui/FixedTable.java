@@ -3,23 +3,19 @@ package org.terifan.spreadsheet.ui;
 import org.terifan.spreadsheet.actions.CutAction;
 import org.terifan.spreadsheet.actions.PasteAction;
 import org.terifan.spreadsheet.actions.CopyAction;
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javax.swing.ActionMap;
-import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.table.TableModel;
-import org.terifan.spreadsheet.Map;
+import org.terifan.spreadsheet.ValueMap;
 import org.terifan.spreadsheet.MapRow;
 import org.terifan.spreadsheet.SpreadSheet;
 import org.terifan.spreadsheet.SpreadSheetTableColumn;
@@ -27,14 +23,14 @@ import org.terifan.spreadsheet.Tuple;
 import org.terifan.spreadsheet.actions.DeleteAction;
 
 
-public class FixedTable extends JTable
+public class FixedTable extends JTable implements Serializable
 {
-	private static final long serialVersionUID = 1L;
+	private final static long serialVersionUID = 1L;
 
 	private WorkBook mWorkBook;
 	private SpreadSheet mSpreadSheet;
-	private Map<Boolean> mMap;
-	private Map<Boolean> mTempMap;
+	private ValueMap<Boolean> mMap;
+	private ValueMap<Boolean> mTempMap;
 	private Point mFirstExtendCell;
 	private Boolean mNewState;
 	private Tuple mAnchor;
@@ -45,7 +41,7 @@ public class FixedTable extends JTable
 	{
 		super(aTableModel);
 
-		mMap = new Map<>();
+		mMap = new ValueMap<>();
 		mWorkBook = aWorkBook;
 		mSpreadSheet = aSpreadSheet;
 
@@ -115,14 +111,14 @@ public class FixedTable extends JTable
 	{
 //		System.out.println(aRow+" "+aCol+" "+aToggle+" "+aExtend);
 
-		Map<Boolean> old = new Map<>();
+		ValueMap<Boolean> old = new ValueMap<>();
 		old.addAll(mMap);
 
 		if (aToggle && !aExtend)
 		{
 			mFirstExtendCell = new Point(aRow, aCol);
 			mNewState = !isCellSelected(aRow, aCol);
-			mTempMap = new Map<>();
+			mTempMap = new ValueMap<>();
 			mTempMap.addAll(mMap);
 		}
 		if (!aToggle && !aExtend)
@@ -145,7 +141,7 @@ public class FixedTable extends JTable
 			{
 				if (mTempMap == null)
 				{
-					mTempMap = new Map<>();
+					mTempMap = new ValueMap<>();
 					mTempMap.addAll(mMap);
 				}
 				else
@@ -281,7 +277,7 @@ public class FixedTable extends JTable
 
 	public void setValueAt(Tuple aPos, Object aValue)
 	{
-		mSpreadSheet.setValueAt(aValue, aPos);
+		mSpreadSheet.setValueAt(aPos, aValue);
 
 		super.setValueAt(aValue == null ? "" : aValue.toString(), aPos.getRow(), aPos.getCol());
 	}

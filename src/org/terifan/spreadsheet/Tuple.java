@@ -1,8 +1,12 @@
 package org.terifan.spreadsheet;
 
+import java.io.Serializable;
 
-public class Tuple
+
+public class Tuple implements Serializable
 {
+	private final static long serialVersionUID = 1L;
+
 	private boolean mLockedRow;
 	private boolean mLockedCol;
 	private int mRow;
@@ -11,16 +15,22 @@ public class Tuple
 
 	public Tuple(int aRow, int aCol)
 	{
+		if (aCol < 0 || aRow < 0)
+		{
+			throw new IllegalArgumentException("Illegal position: " + aRow + ", " + aCol);
+		}
+
 		mCol = aCol;
 		mRow = aRow + 1;
-
-		if (mCol < 0 || mRow <= 0)
-		{
-			throw new IllegalArgumentException("Illegal position: " + this);
-		}
 	}
 
 
+	/**
+	 * Create a Tuple from an expression
+	 * @param aExpression
+	 *   the column and row e.g. "a1". Supports locking of either or both, e.g. "$a1" is locked at column A while row 1 is unlocked. This
+	 *   locking mechanism effects how relative positions are computed.
+	 */
 	public Tuple(String aExpression)
 	{
 		mLockedCol = aExpression.startsWith("$");
@@ -56,7 +66,14 @@ public class Tuple
 
 
 	/**
-	 * Create a Tuple relative to this Tuple accounting for locked column/row.
+	 * Create a Tuple relative to this Tuple accounting for locked column/row (i.e. if a row is locked then the row value provided is ignored).<br/>
+	 * Relative position from a locked position:
+	 * <pre>
+	 * new Tuple("a1").relative(1,1) return a Tuple with column B and row 2
+	 * new Tuple("$a1").relative(1,1) return a Tuple with column A and row 2
+	 * new Tuple("a$1").relative(1,1) return a Tuple with column B and row 1
+	 * new Tuple("$a$1").relative(1,1) return a Tuple with column A and row 1
+	 * </pre>
 	 */
 	public Tuple relative(int aRow, int aCol)
 	{

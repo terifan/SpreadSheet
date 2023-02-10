@@ -1,5 +1,6 @@
 package org.terifan.spreadsheet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,21 +9,24 @@ import org.terifan.spreadsheet.ui.TableFactory;
 import org.terifan.spreadsheet.ui.WorkBook;
 
 
-public class SpreadSheet implements Iterable<Tuple>, DataProvider
+public class SpreadSheet implements Iterable<Tuple>, DataProvider, Serializable
 {
+	private final static long serialVersionUID = 1L;
+
 	private ArrayList<SpreadSheetTableColumn> mColumns;
 	private HashMap<Integer, String> mRowHeaders;
-	private Map<Cell> mMap;
+	private ValueMap<Cell> mMap;
 	private int mRowHeaderSize;
 	private int mRowNumberSize;
 	private String mRowHeaderTitle;
-	private DataLookup mDataLookup;
-	private SpreadSheetFunctions mFunctions;
+
+	private transient DataLookup mDataLookup;
+	private transient SpreadSheetFunctions mFunctions;
 
 
 	public SpreadSheet()
 	{
-		mMap = new Map();
+		mMap = new ValueMap();
 		mColumns = new ArrayList<>();
 		mRowHeaders = new HashMap<>();
 
@@ -85,16 +89,39 @@ public class SpreadSheet implements Iterable<Tuple>, DataProvider
 	}
 
 
-	public SpreadSheet setValueAt(Object aValue, Tuple aPos)
+	public SpreadSheet setValueAt(Tuple aPos, Object aValue)
 	{
-		setValueAt(aValue, aPos.getRow(), aPos.getCol());
+		setValueAt(aPos.getRow(), aPos.getCol(), aValue);
 		return this;
 	}
 
 
-	public SpreadSheet setValueAt(Object aValue, int aRow, int aCol)
+	public SpreadSheet setValueAt(int aRow, int aCol, Object aValue)
 	{
 		createCell(aRow, aCol).setValue(aValue == null ? null : aValue.toString());
+		return this;
+	}
+
+
+	public SpreadSheet parseValuesTo(int aRow, int aCol, String aValue)
+	{
+		for (String rowValues : aValue.split("\n"))
+		{
+			int col = aCol;
+			for (String colValue : rowValues.split("\t"))
+			{
+				Cell cell = createCell(aRow, col++);
+				if (colValue.equals("null"))
+				{
+					cell.setValue(null);
+				}
+				else
+				{
+					cell.setValue(colValue);
+				}
+			}
+			aRow++;
+		}
 		return this;
 	}
 
@@ -371,7 +398,6 @@ public class SpreadSheet implements Iterable<Tuple>, DataProvider
 		}
 
 		CellValue v = cell.computeValue(aTimeCode);
-			System.out.println(aRow+" "+aColumn+" "+v);
 		return v;
 	}
 
